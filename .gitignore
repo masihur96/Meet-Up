@@ -3,4 +3,4 @@ build/
 *.log
 
 # Ignore secret folder
-ignore_directory/
+assets/ignore_directory/

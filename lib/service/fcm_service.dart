@@ -120,14 +120,15 @@ class FCMService {
 
   Future<void> sendNotification({
     required String recipientToken,
-
     required UserModel caller,
-
   }) async {
     // Service account credentials (replace with your service account JSON)
-    final jsonString = await File('ignore_directory/service_account.json').readAsString();
-    final serviceAccountJson = jsonDecode(jsonString);
 
+    final jsonString = await rootBundle.loadString('assets/ignore_directory/service_account.json');
+    final jsonData = json.decode(jsonString);
+
+
+    final serviceAccountJson = jsonData;
     try {
       // Initialize Dio
       final dio = Dio();
