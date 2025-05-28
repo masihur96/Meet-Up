@@ -1,0 +1,6 @@
+# Ignore build files
+build/
+*.log
+
+# Ignore secret folder
+ignore_directory/
