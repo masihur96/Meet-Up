@@ -7,7 +7,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:meet_check/home_screen.dart';
 import 'package:meet_check/model/user_model.dart';
 import 'package:meet_check/service/fcm_service.dart';
-import 'package:uuid/uuid.dart';
+
 
 import '../service/local_storage_service.dart';
 

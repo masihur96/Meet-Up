@@ -82,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
     fcmService.sendNotification(
       recipientToken: user.token,
       caller: userModel!,
+      receiver: user,
       callId: _currentCallId!,
     );
 

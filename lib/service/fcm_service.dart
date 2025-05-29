@@ -57,11 +57,13 @@ class FCMService {
   }
 
   static void _handleMessageData(Map<String, dynamic> data) {
+    print("Notification Data:::::: ${data.toString()}");
     if (data['type'] == 'call') {
       CallService().showIncomingCall(
         callerName: data['callerName'] ?? 'Unknown',
         callerId: data['callerId'] ?? 'unknown_id',
-        meetingId: data['meetingId'] ?? '',
+        callId: data['callId'] ?? '',
+        receiverId: data['receiverId'] ?? 'unknown_receiver_id',
       );
     }
   }
@@ -72,11 +74,15 @@ class FCMService {
     final android = message.notification?.android;
     final data = message.data;
 
+
+    print("Notification Data:::::: ${data.toString()}");
+
     if (data['type'] == 'call') {
       CallService().showIncomingCall(
         callerName: data['callerName'] ?? 'Unknown',
         callerId: data['callerId'] ?? 'unknown_id',
-        meetingId: data['meetingId'] ?? '',
+        callId: data['callId'] ?? '',
+        receiverId: data['receiverId'] ?? 'unknown_receiver_id',
       );
       return;
     }
@@ -117,6 +123,7 @@ class FCMService {
   Future<void> sendNotification({
     required String recipientToken,
     required UserModel caller,
+    required UserModel receiver,
     required String callId,
   }) async {
     // Service account credentials (replace with your service account JSON)
@@ -155,6 +162,7 @@ class FCMService {
             'type': 'call',
             'callId': callId,
             'callerId': caller.id,
+            'receiverId': receiver.id,
             'callerName': caller.name,
           }
         }

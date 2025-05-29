@@ -23,13 +23,14 @@ class CallService {
   Future<void> showIncomingCall({
     required String callerName,
     required String callerId,
-    required String meetingId,
+    required String callId,
+    required String receiverId,
   }) async {
-    final uuid = const Uuid().v4(); // Generate unique call ID
-    _currentCallId = uuid; // Save call ID for ending the call later
+
+    _currentCallId = callId; // Save call ID for ending the call later
 
     final params = CallKitParams(
-      id: uuid,
+      id: _currentCallId,
       nameCaller: callerName,
       appName: 'Meet Check',
       avatar: 'https://i.pravatar.cc/100', // optional avatar
@@ -39,7 +40,7 @@ class CallService {
       textAccept: 'Accept',
       textDecline: 'Decline',
 
-      extra: <String, dynamic>{'meetingId': meetingId},
+      extra: <String, dynamic>{'meetingId': _currentCallId},
       headers: <String, dynamic>{'apiKey': 'Abc@123!', 'platform': 'flutter'},
       android: const AndroidParams(
         isCustomNotification: true,
@@ -83,7 +84,8 @@ class CallService {
         case Event.actionCallAccept:
           final meetingId = data?['extra']['meetingId'];
           final nameCaller = data?['nameCaller'];
-          _onCallAccepted(meetingId,nameCaller);
+          final firebaseId = data?['number'];
+          _onCallAccepted(meetingId,nameCaller,firebaseId);
           break;
 
         case Event.actionCallDecline:
@@ -101,7 +103,7 @@ class CallService {
   }
 
 
-  void _onCallAccepted(String? meetingId,String? callerName) {
+  void _onCallAccepted(String? meetingId,String? callerName,String firebaseId) {
     if (meetingId == null) {
       print("⚠️ No meetingId provided");
       return;
@@ -112,10 +114,10 @@ class CallService {
     // Navigate to your call/meeting screen (using context, routing, etc.)
     // You may use a service or global navigator key
     print("✅ Accepted call with meetingId: $meetingId");
-    // _callService. updateUserStatus(
-    //   userId: user.id,
-    //   newStatus: 'accepted',
-    // );
+    _callService. updateUserStatus(
+      userId: firebaseId,
+      newStatus: 'accepted',
+    );
 
     navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(
