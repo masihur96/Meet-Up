@@ -110,42 +110,40 @@ class _HomeScreenState extends State<HomeScreen> {
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(user.avatarUrl),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              'Calling ${user.name}...',
-              style: const TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.call_end, color: Colors.red),
-                  onPressed: () {
-                    callService.stopCallingBeep();
-                    _callService. updateUserStatus(
-                      userId: user.id,
-                      newStatus: 'cancelled',
-                    );
-                    setState(() {
-                      _isCalling = false;
-                    });
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
+      builder: (context) => BounchingDialog(child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: NetworkImage(user.avatarUrl),
+          ),
+          const SizedBox(height: 20),
+          Text(
+            'Calling ${user.name}...',
+            style: const TextStyle(fontSize: 18),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.call_end, color: Colors.red),
+                onPressed: () {
+                  callService.stopCallingBeep();
+                  _callService. updateUserStatus(
+                    userId: user.id,
+                    newStatus: 'cancelled',
+                  );
+                  setState(() {
+                    _isCalling = false;
+                  });
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),),
     );
   }
 

@@ -36,10 +36,12 @@ class _CallingScreenState extends State<CallingScreen> {
       configOverrides: {
         "startWithAudioMuted": false,
         "startWithVideoMuted": !widget.isVideo,
+        "prejoinPageEnabled": false,
       },
       featureFlags: {
         "welcomepage.enabled": false,
         "call-integration.enabled": false,
+
       },
       userInfo: JitsiMeetUserInfo(
         displayName: widget.callerName,
@@ -59,17 +61,7 @@ class _CallingScreenState extends State<CallingScreen> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
-      appBar: AppBar(
-        title: GestureDetector(
 
-          onTap: (){
-            _joinMeeting();
-          },
-
-
-            child: Text("Meeting")),
-        backgroundColor: Colors.white,
-      ),
       backgroundColor: Colors.black,
       body: Center(
         child: Text(
