@@ -4,12 +4,8 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
 import 'package:meet_check/screens/bounching_dialog.dart';
 import 'package:meet_check/screens/custom_size.dart';
-import 'package:meet_check/service/call_service.dart';
 import 'package:meet_check/service/fcm_service.dart';
 import 'package:meet_check/service/local_storage_service.dart';
-
-
-import 'meeting/join_meeting_screen.dart';
 import 'model/user_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -79,18 +75,6 @@ class _HomeScreenState extends State<HomeScreen> {
       recipientToken: user.token,
       caller: userModel!,
     );
-
-   // fcmService.notifyPortal(receiverUid: user.id, sanderId: userModel!.id, uid: uuid.v4(), message: "Calling", title: "Calling", path: "/message");
-
-    // Here you would typically make an API call to your backend
-    // to initiate the call and notify the receiver
-    // For demonstration, we'll just show the incoming call UI
-    // await _callService.showIncomingCall(
-    //   callerName: user.name,
-    //   callerId: user.id,
-    //   meetingId: user.id
-    // );
-
   }
 
 
