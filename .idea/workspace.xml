@@ -9,13 +9,23 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0599e7cc-3e01-4eb7-bb36-8ad9e358d9bc" name="Changes" comment="Subscribe FCM">
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+    <list default="true" id="0599e7cc-3e01-4eb7-bb36-8ad9e358d9bc" name="Changes" comment="Ignore Service account">
+      <change afterPath="$PROJECT_DIR$/lib/screens/bounching_dialog.dart" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/lib/screens/custom_size.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/.filecache" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/.filecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/app.dill" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/app.dill" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/debug_android_application.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/debug_android_application.stamp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/flutter_assets.d" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/flutter_assets.d" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.d" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.d" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.stamp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/outputs.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/outputs.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/program.dill" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/program.dill" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/calling_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/calling_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/home_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/meeting/join_meeting_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meeting/join_meeting_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/service/fcm_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/service/fcm_service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,13 +82,14 @@
     "git-widget-placeholder": "MasihurDev",
     "io.flutter.reload.alreadyRun": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/masihur/StudioProjects/meet_check/lib/service",
+    "last_opened_file_path": "/home/masihur/StudioProjects/meet_check/lib/screens",
     "settings.editor.selected.configurable": "flutter.settings",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/lib/screens" />
       <recent name="$PROJECT_DIR$/lib/service" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
@@ -296,7 +307,23 @@
       <option name="project" value="LOCAL" />
       <updated>1748429241889</updated>
     </task>
-    <option name="localTasksCounter" value="25" />
+    <task id="LOCAL-00025" summary="Ignore Service account">
+      <option name="closed" value="true" />
+      <created>1748433774451</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1748433774451</updated>
+    </task>
+    <task id="LOCAL-00026" summary="Ignore Service account">
+      <option name="closed" value="true" />
+      <created>1748433822502</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1748433822502</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -315,6 +342,7 @@
     <MESSAGE value="User" />
     <MESSAGE value="Subscribe" />
     <MESSAGE value="Subscribe FCM" />
-    <option name="LAST_COMMIT_MESSAGE" value="Subscribe FCM" />
+    <MESSAGE value="Ignore Service account" />
+    <option name="LAST_COMMIT_MESSAGE" value="Ignore Service account" />
   </component>
 </project>

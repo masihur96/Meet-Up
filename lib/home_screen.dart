@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
+import 'package:meet_check/screens/bounching_dialog.dart';
+import 'package:meet_check/screens/custom_size.dart';
 import 'package:meet_check/service/call_service.dart';
 import 'package:meet_check/service/fcm_service.dart';
 import 'package:meet_check/service/local_storage_service.dart';
@@ -18,10 +21,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
-  final CallService _callService = CallService();
   StreamSubscription<DatabaseEvent>? _usersSubscription;
 
-  String? _fcmToken;
+  bool _isAudioEnabled = true;
+  bool _isVideoEnabled = true;
+  bool _isLoading = false;
+
+
 
   @override
   void initState() {
@@ -175,7 +181,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                   color: Colors.grey,
                                 ),
                               ),
-
                               IconButton(
                                 icon: const Icon(Icons.message),
                                 color: Colors.blue,
@@ -189,18 +194,76 @@ class _HomeScreenState extends State<HomeScreen> {
                                 onPressed: () => _makeCall(user),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.video_call),
-                                color: Colors.blue.shade900,
-                                tooltip: 'Video Call',
-                                onPressed: () => _makeCall(user),
-                              ),
-                              IconButton(
                                 icon: const Icon(Icons.meeting_room),
                                 color: Colors.orange,
                                 tooltip: 'Join Meeting',
                                 onPressed: () {
-                                  Navigator.push(context, MaterialPageRoute(builder: (_)=>
-                                      JoinMeetingScreen(userModel: user,)));
+
+
+                                  showDialog(
+                                    barrierDismissible: false,
+                                    context: context,
+                                    builder: (_) {
+                                      final TextEditingController meetingIdController = TextEditingController();
+
+                                      return BounchingDialog(
+                                        width: screenSize(context, 0.6),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                'Join Meeting',
+                                                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              TextField(
+                                                controller: meetingIdController,
+                                                decoration: InputDecoration(
+                                                  labelText: 'Meeting ID',
+                                                  border: OutlineInputBorder(),
+                                                ),
+                                              ),
+                                              const SizedBox(height: 20),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                children: [
+                                                  TextButton(
+                                                    onPressed: () => Navigator.pop(context), // Close dialog
+                                                    child: Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () {
+
+                                                      if (meetingIdController.text.isEmpty) {
+                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                          const SnackBar(content: Text('Please fill in all fields')),
+                                                        );
+                                                        return;
+                                                      }else{
+
+                                                        // Validate meeting ID format if necessary
+                                                        final meetingId = meetingIdController.text.trim();
+                                                        if (meetingId.isNotEmpty) {
+                                                          Navigator.pop(context); // Close dialog
+                                                          _joinMeeting(meetingId,userModel!); // Pass ID to your join function
+                                                        }
+                                                      }
+
+
+
+                                                    },
+                                                    child: Text('Join'),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
 
                                 },
                               ),
@@ -221,24 +284,40 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildOptionCard(BuildContext context, String title, IconData icon,
-      Color color, VoidCallback onTap) {
-    return Card(
-      elevation: 4,
-      child: InkWell(
-        onTap: onTap,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 48, color: color),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-          ],
+  void _joinMeeting(String meetingId,UserModel user) async {
+    final JitsiMeet jitsiMeet = JitsiMeet();
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      var options = JitsiMeetConferenceOptions(
+        serverURL: "https://echo.attendancekeeper.net/",
+        configOverrides: {
+          "startWithAudioMuted": !_isAudioEnabled,
+          "startWithVideoMuted": !_isVideoEnabled,
+          "subject": "Jitsi Meetup",
+        },
+        featureFlags: {
+          "unsaferoomwarning.enabled": false,
+          "welcomepage.enabled": false,
+        },
+        room: meetingId,
+        userInfo: JitsiMeetUserInfo(
+          displayName: user.name,
         ),
-      ),
-    );
+      );
+
+      await jitsiMeet.join(options);
+    } catch (error) {
+      debugPrint("Error joining meeting: $error");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error joining meeting: $error')),
+      );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 }

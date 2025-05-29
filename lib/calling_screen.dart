@@ -4,12 +4,14 @@ import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
 class CallingScreen extends StatefulWidget {
   final String callerName;
   final String meetingId;
+  final String avatarUrl;
   final bool isVideo;
 
   const CallingScreen({
     super.key,
     required this.callerName,
     required this.meetingId,
+    this.avatarUrl = "",
     this.isVideo = false,
   });
 
@@ -27,10 +29,6 @@ class _CallingScreenState extends State<CallingScreen> {
   }
 
 
-
-
-
-
   Future<void> _joinMeeting() async {
     final options = JitsiMeetConferenceOptions(
       serverURL: "https://echo.attendancekeeper.net/", // Or your own server
@@ -46,7 +44,7 @@ class _CallingScreenState extends State<CallingScreen> {
       userInfo: JitsiMeetUserInfo(
         displayName: widget.callerName,
         email: "", // optional
-        avatar: "", // optional
+        avatar: widget.avatarUrl.isEmpty?"https://i.pravatar.cc/100": widget.avatarUrl, // optional
       ),
     );
 
@@ -60,7 +58,18 @@ class _CallingScreenState extends State<CallingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return  Scaffold(
+      appBar: AppBar(
+        title: GestureDetector(
+
+          onTap: (){
+            _joinMeeting();
+          },
+
+
+            child: Text("Meeting")),
+        backgroundColor: Colors.white,
+      ),
       backgroundColor: Colors.black,
       body: Center(
         child: Text(

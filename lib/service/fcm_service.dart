@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
 import 'package:meet_check/model/user_model.dart';
-import 'package:meet_check/service/data_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:googleapis_auth/auth_io.dart';
 import 'dart:convert';
@@ -130,6 +126,7 @@ class FCMService {
 
     final serviceAccountJson = jsonData;
     try {
+
       // Initialize Dio
       final dio = Dio();
 
