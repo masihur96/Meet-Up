@@ -68,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           id: userId,
           name: _nameController.text.trim(),
           token: token ?? "",
-          status: "offline",
+          status: "",
         );
 
         await _database.child('users').child(userId).set(user.toMap());

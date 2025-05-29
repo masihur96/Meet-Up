@@ -72,7 +72,10 @@ class _HomeScreenState extends State<HomeScreen> {
       _currentCallId = DateTime.now().millisecondsSinceEpoch.toString();
     });
 
-
+    _callService. updateUserStatus(
+      userId: user.id,
+      newStatus: 'calling',
+    );
     _callService.startCallingBeep();
 
 
@@ -97,7 +100,6 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-
 
 
 
@@ -126,6 +128,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: const Icon(Icons.call_end, color: Colors.red),
                   onPressed: () {
                     callService.stopCallingBeep();
+                    _callService. updateUserStatus(
+                      userId: user.id,
+                      newStatus: 'cancelled',
+                    );
                     setState(() {
                       _isCalling = false;
                     });

@@ -57,7 +57,7 @@ class FCMService {
   }
 
   static void _handleMessageData(Map<String, dynamic> data) {
-    if (data['type'] == 'incoming_call') {
+    if (data['type'] == 'call') {
       CallService().showIncomingCall(
         callerName: data['callerName'] ?? 'Unknown',
         callerId: data['callerId'] ?? 'unknown_id',
@@ -72,7 +72,7 @@ class FCMService {
     final android = message.notification?.android;
     final data = message.data;
 
-    if (data['type'] == 'incoming_call') {
+    if (data['type'] == 'call') {
       CallService().showIncomingCall(
         callerName: data['callerName'] ?? 'Unknown',
         callerId: data['callerId'] ?? 'unknown_id',

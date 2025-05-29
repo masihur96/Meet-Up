@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/entities/android_params.dart';
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
@@ -13,6 +14,7 @@ import 'package:uuid/uuid.dart';
 
 class CallService {
   static final CallService _instance = CallService._internal();
+  final DatabaseReference _database = FirebaseDatabase.instance.ref();
   factory CallService() => _instance;
   CallService._internal();
 
@@ -74,6 +76,7 @@ class CallService {
       final data = event?.body;
 
       print("📞 CallKit Event: $eventType");
+      print("📞 CallKit Event: $data");
       print("📞 CallKit Event: ${data['extra']['meetingId']}");
 
       switch (eventType) {
@@ -104,9 +107,15 @@ class CallService {
       return;
     }
 
+    CallService _callService = CallService();
+
     // Navigate to your call/meeting screen (using context, routing, etc.)
     // You may use a service or global navigator key
     print("✅ Accepted call with meetingId: $meetingId");
+    // _callService. updateUserStatus(
+    //   userId: user.id,
+    //   newStatus: 'accepted',
+    // );
 
     navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(
@@ -139,6 +148,24 @@ class CallService {
   void stopCallingBeep() {
     _callingTimer.cancel();
     _audioPlayer.stop();
+  }
+
+
+
+  Future<void> updateUserStatus({
+    required String userId,
+    required String newStatus,
+  }) async {
+
+
+    try {
+      await _database.child('users').child(userId).update({
+        'status': newStatus,
+      });
+      print('User status updated to $newStatus');
+    } catch (e) {
+      print('Error updating user status: $e');
+    }
   }
 
 
