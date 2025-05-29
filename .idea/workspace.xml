@@ -9,7 +9,7 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0599e7cc-3e01-4eb7-bb36-8ad9e358d9bc" name="Changes" comment="Calling Beep">
+    <list default="true" id="0599e7cc-3e01-4eb7-bb36-8ad9e358d9bc" name="Changes" comment="Calling aCCEPT">
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/.filecache" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/.filecache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/app.dill" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/app.dill" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/debug_android_application.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/debug_android_application.stamp" afterDir="false" />
@@ -17,11 +17,9 @@
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.d" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.d" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.stamp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/program.dill" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/program.dill" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/service/call_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/service/call_service.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/service/fcm_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/service/fcm_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/home_screen.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -360,7 +358,15 @@
       <option name="project" value="LOCAL" />
       <updated>1748510907109</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Calling aCCEPT">
+      <option name="closed" value="true" />
+      <created>1748512759801</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1748512759801</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -382,6 +388,7 @@
     <MESSAGE value="Ignore Service account" />
     <MESSAGE value="Meeting System" />
     <MESSAGE value="Calling Beep" />
-    <option name="LAST_COMMIT_MESSAGE" value="Calling Beep" />
+    <MESSAGE value="Calling aCCEPT" />
+    <option name="LAST_COMMIT_MESSAGE" value="Calling aCCEPT" />
   </component>
 </project>

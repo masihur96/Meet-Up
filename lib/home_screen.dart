@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
+import 'package:meet_check/calling_screen.dart';
 import 'package:meet_check/screens/bounching_dialog.dart';
 import 'package:meet_check/screens/custom_size.dart';
 import 'package:meet_check/service/call_service.dart';
@@ -86,7 +87,7 @@ class _HomeScreenState extends State<HomeScreen> {
       callId: _currentCallId!,
     );
 
-    _database.child('calls/${_currentCallId}').onValue.listen((event) {
+    _database.child('users/${user.id}').onValue.listen((event) {
       if (event.snapshot.value != null) {
         final data = Map<String, dynamic>.from(event.snapshot.value as Map);
         if (data['status'] == 'accepted') {
@@ -96,12 +97,13 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {
             _isCalling = false;
           });
+
+          Navigator.push(context, MaterialPageRoute(builder: ((_)=>CallingScreen(callerName: user.name, meetingId: user.id))));
           _joinMeeting(_currentCallId!, userModel!);
         }
       }
     });
   }
-
 
 
   void _showCallingScreen(UserModel user,CallService callService) {
