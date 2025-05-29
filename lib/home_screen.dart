@@ -4,6 +4,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
 import 'package:meet_check/screens/bounching_dialog.dart';
 import 'package:meet_check/screens/custom_size.dart';
+import 'package:meet_check/service/call_service.dart';
 import 'package:meet_check/service/fcm_service.dart';
 import 'package:meet_check/service/local_storage_service.dart';
 import 'model/user_model.dart';
@@ -18,12 +19,15 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
   StreamSubscription<DatabaseEvent>? _usersSubscription;
+  CallService _callService = CallService();
+  FCMService fcmService = FCMService();
 
   bool _isAudioEnabled = true;
   bool _isVideoEnabled = true;
   bool _isLoading = false;
-
-
+  bool _isCalling = false;
+  Timer? _callingTimer;
+  String? _currentCallId;
 
   @override
   void initState() {
@@ -31,8 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
     _listenToAllUsers();
     getUser();
   }
-
-
 
   UserModel ? userModel;
 
@@ -44,8 +46,6 @@ class _HomeScreenState extends State<HomeScreen> {
 
     print(userModel?.name??"Empty");
   }
-
-
 
   List<UserModel> allUsers = [];
 
@@ -67,16 +67,78 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _makeCall(UserModel user) async {
-    // var uuid = Uuid();
+    setState(() {
+      _isCalling = true;
+      _currentCallId = DateTime.now().millisecondsSinceEpoch.toString();
+    });
 
-    FCMService fcmService = FCMService();
+
+    _callService.startCallingBeep();
+
 
     fcmService.sendNotification(
       recipientToken: user.token,
       caller: userModel!,
+      callId: _currentCallId!,
     );
+
+    _database.child('calls/${_currentCallId}').onValue.listen((event) {
+      if (event.snapshot.value != null) {
+        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+        if (data['status'] == 'accepted') {
+
+          _callService.stopCallingBeep();
+
+          setState(() {
+            _isCalling = false;
+          });
+          _joinMeeting(_currentCallId!, userModel!);
+        }
+      }
+    });
   }
 
+
+
+
+  void _showCallingScreen(UserModel user,CallService callService) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: NetworkImage(user.avatarUrl),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Calling ${user.name}...',
+              style: const TextStyle(fontSize: 18),
+            ),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.call_end, color: Colors.red),
+                  onPressed: () {
+                    callService.stopCallingBeep();
+                    setState(() {
+                      _isCalling = false;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -93,11 +155,7 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-
-             // LocalUserStorage.clearUser();
               getUser();
-              // await _auth.signOut();
-              // Navigate to login screen
             },
           ),
         ],
@@ -175,15 +233,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                 icon: const Icon(Icons.call),
                                 color: Colors.green,
                                 tooltip: 'Audio Call',
-                                onPressed: () => _makeCall(user),
+                                onPressed: () {
+                                  _makeCall(user);
+                                  _showCallingScreen(user, _callService);
+                                },
                               ),
                               IconButton(
                                 icon: const Icon(Icons.meeting_room),
                                 color: Colors.orange,
                                 tooltip: 'Join Meeting',
                                 onPressed: () {
-
-
                                   showDialog(
                                     barrierDismissible: false,
                                     context: context,
@@ -219,24 +278,18 @@ class _HomeScreenState extends State<HomeScreen> {
                                                   ),
                                                   TextButton(
                                                     onPressed: () {
-
                                                       if (meetingIdController.text.isEmpty) {
                                                         ScaffoldMessenger.of(context).showSnackBar(
                                                           const SnackBar(content: Text('Please fill in all fields')),
                                                         );
                                                         return;
                                                       }else{
-
-                                                        // Validate meeting ID format if necessary
                                                         final meetingId = meetingIdController.text.trim();
                                                         if (meetingId.isNotEmpty) {
                                                           Navigator.pop(context); // Close dialog
                                                           _joinMeeting(meetingId,userModel!); // Pass ID to your join function
                                                         }
                                                       }
-
-
-
                                                     },
                                                     child: Text('Join'),
                                                   ),
@@ -248,7 +301,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                       );
                                     },
                                   );
-
                                 },
                               ),
                             ],

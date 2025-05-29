@@ -41,6 +41,7 @@ dependencies:
   device_info_plus: ^11.3.0
   shared_preferences: ^2.5.3
   googleapis_auth: ^2.0.0
+  just_audio: ^0.10.3
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -72,6 +73,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/ignore_directory/service_account.json
+    - assets/sounds/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

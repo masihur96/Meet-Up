@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_callkit_incoming/entities/android_params.dart';
 import 'package:flutter_callkit_incoming/entities/call_event.dart';
 import 'package:flutter_callkit_incoming/entities/call_kit_params.dart';
 import 'package:flutter_callkit_incoming/entities/ios_params.dart';
 import 'package:flutter_callkit_incoming/flutter_callkit_incoming.dart';
+import 'package:just_audio/just_audio.dart';
 import 'package:meet_check/calling_screen.dart';
 import 'package:meet_check/main.dart';
 import 'package:uuid/uuid.dart';
@@ -116,6 +119,27 @@ class CallService {
     );
   }
 
+
+  late Timer _callingTimer;
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  Future<void> startCallingBeep() async {
+    try {
+      await _audioPlayer.setAsset('assets/sounds/calling_beep.mp3');
+
+      _callingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+        await _audioPlayer.seek(Duration.zero);
+        await _audioPlayer.play();
+      });
+    } catch (e) {
+      print('Failed to play beep: $e');
+    }
+  }
+
+  void stopCallingBeep() {
+    _callingTimer.cancel();
+    _audioPlayer.stop();
+  }
 
 
   Future<void> endCall() async {

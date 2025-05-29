@@ -117,6 +117,7 @@ class FCMService {
   Future<void> sendNotification({
     required String recipientToken,
     required UserModel caller,
+    required String callId,
   }) async {
     // Service account credentials (replace with your service account JSON)
 
@@ -151,10 +152,10 @@ class FCMService {
             "body": "${caller.name} is calling...",
           },
           "data": {
-            "type": "incoming_call",
-            "callerName": caller.name,
-            "callerId": "user123",
-            "meetingId": "meet_456"
+            'type': 'call',
+            'callId': callId,
+            'callerId': caller.id,
+            'callerName': caller.name,
           }
         }
       };
@@ -185,6 +186,7 @@ class FCMService {
       print('Error sending notification: $e');
     }
   }
+
 
 
 

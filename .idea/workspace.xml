@@ -9,9 +9,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0599e7cc-3e01-4eb7-bb36-8ad9e358d9bc" name="Changes" comment="Ignore Service account">
-      <change afterPath="$PROJECT_DIR$/lib/screens/bounching_dialog.dart" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/lib/screens/custom_size.dart" afterDir="false" />
+    <list default="true" id="0599e7cc-3e01-4eb7-bb36-8ad9e358d9bc" name="Changes" comment="Meeting System">
+      <change afterPath="$PROJECT_DIR$/assets/sounds/calling_beep.mp3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/dartpad/web_plugin_registrant.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/.filecache" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/.filecache" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/app.dill" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/app.dill" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/debug_android_application.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/debug_android_application.stamp" afterDir="false" />
@@ -20,12 +20,20 @@
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.stamp" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/kernel_snapshot_program.stamp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/outputs.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/outputs.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/program.dill" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/a73ba488d545a4d57f49bae4e3071c3f/program.dill" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/flutter_build/dart_plugin_registrant.dart" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/flutter_build/dart_plugin_registrant.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dart_tool/package_config_subset" beforeDir="false" afterPath="$PROJECT_DIR$/.dart_tool/package_config_subset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Dart_Packages.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Flutter_Plugins.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/calling_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/calling_screen.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/home_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/meeting/join_meeting_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/meeting/join_meeting_screen.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/service/call_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/service/call_service.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/service/fcm_service.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/service/fcm_service.dart" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" beforeDir="false" afterPath="$PROJECT_DIR$/macos/Flutter/GeneratedPluginRegistrant.swift" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.lock" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,13 +90,14 @@
     "git-widget-placeholder": "MasihurDev",
     "io.flutter.reload.alreadyRun": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/home/masihur/StudioProjects/meet_check/lib/screens",
+    "last_opened_file_path": "/home/masihur/StudioProjects/meet_check/assets/sounds",
     "settings.editor.selected.configurable": "flutter.settings",
     "show.migrate.to.gradle.popup": "false"
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assets/sounds" />
       <recent name="$PROJECT_DIR$/lib/screens" />
       <recent name="$PROJECT_DIR$/lib/service" />
     </key>
@@ -323,7 +332,23 @@
       <option name="project" value="LOCAL" />
       <updated>1748433822502</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="Meeting System">
+      <option name="closed" value="true" />
+      <created>1748499071982</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1748499071982</updated>
+    </task>
+    <task id="LOCAL-00028" summary="Meeting System">
+      <option name="closed" value="true" />
+      <created>1748499334229</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1748499334229</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -343,6 +368,7 @@
     <MESSAGE value="Subscribe" />
     <MESSAGE value="Subscribe FCM" />
     <MESSAGE value="Ignore Service account" />
-    <option name="LAST_COMMIT_MESSAGE" value="Ignore Service account" />
+    <MESSAGE value="Meeting System" />
+    <option name="LAST_COMMIT_MESSAGE" value="Meeting System" />
   </component>
 </project>
