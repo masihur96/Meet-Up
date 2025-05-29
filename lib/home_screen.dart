@@ -242,6 +242,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 tooltip: 'Audio Call',
                                 onPressed: () {
                                   _makeCall(user);
+
                                   _showCallingScreen(user, _callService);
                                 },
                               ),

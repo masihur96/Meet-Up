@@ -79,13 +79,11 @@ class CallService {
       print("📞 CallKit Event: $eventType");
       print("📞 CallKit Event: $data");
       print("📞 CallKit Event: ${data['extra']['meetingId']}");
-
+      final meetingId = data?['extra']['meetingId'];
+      final nameCaller = data?['nameCaller'];
       switch (eventType) {
         case Event.actionCallAccept:
-          final meetingId = data?['extra']['meetingId'];
-          final nameCaller = data?['nameCaller'];
-          final firebaseId = data?['number'];
-          _onCallAccepted(meetingId,nameCaller,firebaseId);
+          _onCallAccepted(meetingId,nameCaller);
           break;
 
         case Event.actionCallDecline:
@@ -103,7 +101,7 @@ class CallService {
   }
 
 
-  void _onCallAccepted(String? meetingId,String? callerName,String firebaseId) {
+  void _onCallAccepted(String? meetingId,String? callerName) {
     if (meetingId == null) {
       print("⚠️ No meetingId provided");
       return;
@@ -115,7 +113,7 @@ class CallService {
     // You may use a service or global navigator key
     print("✅ Accepted call with meetingId: $meetingId");
     _callService. updateUserStatus(
-      userId: firebaseId,
+      userId: meetingId,
       newStatus: 'accepted',
     );
 

@@ -62,7 +62,7 @@ class FCMService {
       CallService().showIncomingCall(
         callerName: data['callerName'] ?? 'Unknown',
         callerId: data['callerId'] ?? 'unknown_id',
-        callId: data['callId'] ?? '',
+        callId: data['receiverId'] ?? '',
         receiverId: data['receiverId'] ?? 'unknown_receiver_id',
       );
     }
@@ -81,7 +81,7 @@ class FCMService {
       CallService().showIncomingCall(
         callerName: data['callerName'] ?? 'Unknown',
         callerId: data['callerId'] ?? 'unknown_id',
-        callId: data['callId'] ?? '',
+        callId: data['receiverId'] ?? '',
         receiverId: data['receiverId'] ?? 'unknown_receiver_id',
       );
       return;
