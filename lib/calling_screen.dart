@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
+import 'package:meet_check/service/call_service.dart';
 
 class CallingScreen extends StatefulWidget {
   final String callerName;
@@ -21,10 +24,16 @@ class CallingScreen extends StatefulWidget {
 
 class _CallingScreenState extends State<CallingScreen> {
   final jitsiMeet = JitsiMeet();
-
+  CallService _callService = CallService();
+  Timer? _autoEndTimer;
   @override
   void initState() {
     super.initState();
+    _autoEndTimer = Timer(Duration(seconds: 30), () {
+      print("No participant joined. Ending call.");
+      _callService.endCall();
+      Navigator.pop(context);
+    });
     _joinMeeting();
   }
 
@@ -40,7 +49,8 @@ class _CallingScreenState extends State<CallingScreen> {
       },
       featureFlags: {
         "welcomepage.enabled": false,
-        "call-integration.enabled": false,
+        "call-integration.enabled": true,
+
 
       },
       userInfo: JitsiMeetUserInfo(
