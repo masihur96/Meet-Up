@@ -58,6 +58,7 @@ class _CallingScreenState extends State<CallingScreen> {
         },
         featureFlags: {
           "welcomepage.enabled": false,
+          "prejoin-page.enabled": false,
           "call-integration.enabled": true,
         },
         userInfo: JitsiMeetUserInfo(
