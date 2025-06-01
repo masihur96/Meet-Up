@@ -141,25 +141,28 @@ class CallService {
   }
 
 
-  late Timer _callingTimer;
+   Timer? _callingTimer;
   final AudioPlayer _audioPlayer = AudioPlayer();
 
   Future<void> startCallingBeep() async {
     try {
       await _audioPlayer.setAsset('assets/sounds/calling_beep.mp3');
-
-      _callingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
+       _callingTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
         await _audioPlayer.seek(Duration.zero);
         await _audioPlayer.play();
-      });
+       });
     } catch (e) {
       print('Failed to play beep: $e');
     }
   }
 
   void stopCallingBeep() {
-    _callingTimer.cancel();
-    _audioPlayer.stop();
+      _audioPlayer.stop();
+      _callingTimer?.cancel();
+      print("No calling beep timer to stop.");
+      return;
+
+
   }
 
 

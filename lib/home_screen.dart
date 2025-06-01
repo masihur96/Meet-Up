@@ -37,6 +37,18 @@ class _HomeScreenState extends State<HomeScreen> {
     getUser();
   }
 
+  // void _startAutoEndTimer() {
+  //   _autoEndTimer = Timer(const Duration(seconds: 30), () {
+  //     if (!_isConnected) {
+  //       print("No participant joined. Ending call.");
+  //       _callService.endCall();
+  //       _callService.stopCallingBeep();
+  //       _autoEndTimer!.cancel();
+  //       Navigator.pop(context);
+  //     }
+  //   });
+  // }
+
   UserModel ? userModel;
 
   getUser()async{
@@ -67,25 +79,48 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  void _makeCall(UserModel user) async {
+  Future<void> _makeCall(UserModel user) async {
     setState(() {
       _isCalling = true;
       _currentCallId = DateTime.now().millisecondsSinceEpoch.toString();
     });
 
-    _callService. updateUserStatus(
+    await showCallingScreen(user, _callService);
+
+  await  _callService. updateUserStatus(
       userId: user.id,
       newStatus: 'calling',
     );
-    _callService.startCallingBeep();
+  await  _callService.startCallingBeep();
 
 
-    fcmService.sendNotification(
+ await   fcmService.sendNotification(
       recipientToken: user.token,
       caller: userModel!,
       receiver: user,
       callId: _currentCallId!,
     );
+
+    print("Show Dialog");
+
+
+
+
+    _callingTimer = Timer(const Duration(seconds: 35), () {
+      if (mounted) {
+        _callService.stopCallingBeep();
+        _callService.updateUserStatus(
+          userId: user.id,
+          newStatus: 'timeout',
+        );
+        if (_isCalling) {
+          setState(() {
+            _isCalling = false;
+          });
+          Navigator.pop(context); // ⬅️ Close dialog
+        }
+      }
+    });
 
     _database.child('users/${user.id}').onValue.listen((event) {
       if (event.snapshot.value != null) {
@@ -94,21 +129,32 @@ class _HomeScreenState extends State<HomeScreen> {
 
           _callService.stopCallingBeep();
 
-          setState(() {
-            _isCalling = false;
-          });
+
           if (mounted) {
+            setState(() {
+              _isCalling = false;
+            });
             Navigator.pop(context);
 
           }
           _joinMeeting(_currentCallId!, userModel!);
+        }else if(data['status'] == 'calling'){
+          if (mounted) {
+            setState(() {
+              _isCalling = false;
+            });
+          }
+
+
         }else{
           _callService.stopCallingBeep();
-          setState(() {
-            _isCalling = false;
-          });
+          _callingTimer?.cancel();
+
           if (mounted) {
-            Navigator.pop(context);
+            setState(() {
+              _isCalling = false;
+            });
+             Navigator.pop(context);
           }
 
         }
@@ -117,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
 
-  void _showCallingScreen(UserModel user,CallService callService) {
+ Future<void>  showCallingScreen(UserModel user,CallService callService) async{
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -139,16 +185,18 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               IconButton(
                 icon: const Icon(Icons.call_end, color: Colors.red),
-                onPressed: () {
+                onPressed: () async{
                   callService.stopCallingBeep();
                   _callService. updateUserStatus(
                     userId: user.id,
                     newStatus: 'cancelled',
                   );
-                  setState(() {
-                    _isCalling = false;
-                  });
-                  Navigator.pop(context);
+                  if(mounted){
+                    setState(() {
+                      _isCalling = false;
+                    });
+                    Navigator.pop(context);
+                  }
                 },
               ),
             ],
@@ -161,8 +209,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     _usersSubscription?.cancel();
+    _callingTimer?.cancel();
     super.dispose();
   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -251,10 +302,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 icon: const Icon(Icons.call),
                                 color: Colors.green,
                                 tooltip: 'Audio Call',
-                                onPressed: () {
-                                  _makeCall(user);
+                                onPressed: () async {
 
-                                  _showCallingScreen(user, _callService);
+                                 await _makeCall(user);
+
+
                                 },
                               ),
                               IconButton(

@@ -31,19 +31,11 @@ class _CallingScreenState extends State<CallingScreen> {
   @override
   void initState() {
     super.initState();
-    _startAutoEndTimer();
+    // _startAutoEndTimer();
     _joinMeeting();
   }
 
-  void _startAutoEndTimer() {
-    _autoEndTimer = Timer(const Duration(seconds: 30), () {
-      if (!_isConnected) {
-        print("No participant joined. Ending call.");
-        _callService.endCall();
-        Navigator.pop(context);
-      }
-    });
-  }
+
 
   Future<void> _joinMeeting() async {
     try {
