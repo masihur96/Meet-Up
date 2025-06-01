@@ -97,9 +97,20 @@ class _HomeScreenState extends State<HomeScreen> {
           setState(() {
             _isCalling = false;
           });
+          if (mounted) {
+            Navigator.pop(context);
 
-          Navigator.push(context, MaterialPageRoute(builder: ((_)=>CallingScreen(callerName: user.name, meetingId: user.id))));
+          }
           _joinMeeting(_currentCallId!, userModel!);
+        }else{
+          _callService.stopCallingBeep();
+          setState(() {
+            _isCalling = false;
+          });
+          if (mounted) {
+            Navigator.pop(context);
+          }
+
         }
       }
     });

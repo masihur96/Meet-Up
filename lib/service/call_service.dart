@@ -87,10 +87,20 @@ class CallService {
           break;
 
         case Event.actionCallDecline:
+
+           updateUserStatus(
+            userId: meetingId,
+            newStatus: 'declined',
+          );
           print("❌ Call declined");
           break;
 
         case Event.actionCallEnded:
+          updateUserStatus(
+            userId: meetingId,
+            newStatus: 'callended',
+          );
+
           print("📴 Call ended");
           break;
 
@@ -116,6 +126,8 @@ class CallService {
       userId: meetingId,
       newStatus: 'accepted',
     );
+
+
 
     navigatorKey.currentState?.pushAndRemoveUntil(
       MaterialPageRoute(
