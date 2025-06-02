@@ -4,6 +4,7 @@ class MessageModel {
   final String message;
   final DateTime timestamp;
   final String messageId;
+  final String status; // 'sent', 'delivered', 'read'
 
   MessageModel({
     required this.senderId,
@@ -11,6 +12,7 @@ class MessageModel {
     required this.message,
     required this.timestamp,
     required this.messageId,
+    this.status = 'sent',
   });
 
   Map<String, dynamic> toMap() {
@@ -20,6 +22,7 @@ class MessageModel {
       'message': message,
       'timestamp': timestamp.millisecondsSinceEpoch,
       'messageId': messageId,
+      'status': status,
     };
   }
 
@@ -30,6 +33,7 @@ class MessageModel {
       message: map['message'],
       timestamp: DateTime.fromMillisecondsSinceEpoch(map['timestamp']),
       messageId: map['messageId'],
+      status: map['status'] ?? 'sent',
     );
   }
 }

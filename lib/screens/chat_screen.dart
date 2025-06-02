@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:meet_check/model/message_model.dart';
@@ -22,11 +23,68 @@ class _ChatScreenState extends State<ChatScreen> {
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
   final ScrollController _scrollController = ScrollController();
   List<MessageModel> messages = [];
+  bool isTyping = false;
+  Timer? _typingTimer;
+  bool isReceiverOnline = false;
 
   @override
   void initState() {
     super.initState();
     _loadMessages();
+    _setupTypingListener();
+    _setupOnlineStatus();
+    _markMessagesAsRead();
+  }
+
+  void _setupOnlineStatus() {
+    _database.child('users/${widget.receiver.id}/status').onValue.listen((event) {
+      if (event.snapshot.value != null) {
+        setState(() {
+          isReceiverOnline = event.snapshot.value == 'online';
+        });
+      }
+    });
+  }
+
+  void _setupTypingListener() {
+    String chatId = _getChatId();
+    _database.child('chats/$chatId/typing/${widget.receiver.id}').onValue.listen((event) {
+      if (event.snapshot.value != null) {
+        setState(() {
+          isTyping = event.snapshot.value as bool;
+        });
+      }
+    });
+  }
+
+  void _markMessagesAsRead() {
+    String chatId = _getChatId();
+    _database.child('chats/$chatId/messages').onValue.listen((event) {
+      if (event.snapshot.value != null) {
+        final data = Map<String, dynamic>.from(event.snapshot.value as Map);
+        data.forEach((key, value) {
+          final message = MessageModel.fromMap(Map<String, dynamic>.from(value));
+          if (message.receiverId == widget.currentUser.id && message.status != 'read') {
+            _database.child('chats/$chatId/messages/$key/status').set('read');
+          }
+        });
+      }
+    });
+  }
+
+  void _updateTypingStatus(bool isTyping) {
+    String chatId = _getChatId();
+    _database.child('chats/$chatId/typing/${widget.currentUser.id}').set(isTyping);
+  }
+
+  void _onTypingChanged(String text) {
+    if (_typingTimer?.isActive ?? false) _typingTimer!.cancel();
+    
+    _updateTypingStatus(true);
+    
+    _typingTimer = Timer(const Duration(seconds: 2), () {
+      _updateTypingStatus(false);
+    });
   }
 
   void _loadMessages() {
@@ -81,6 +139,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
     await _database.child('chats/$chatId/messages/$messageId').set(message.toMap());
     _messageController.clear();
+    _updateTypingStatus(false);
   }
 
   @override
@@ -89,11 +148,39 @@ class _ChatScreenState extends State<ChatScreen> {
       appBar: AppBar(
         title: Row(
           children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(widget.receiver.avatarUrl),
+            Stack(
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(widget.receiver.avatarUrl),
+                ),
+                if (isReceiverOnline)
+                  Positioned(
+                    right: 0,
+                    bottom: 0,
+                    child: Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                      ),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(width: 10),
-            Text(widget.receiver.name),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(widget.receiver.name),
+                if (isTyping)
+                  const Text(
+                    'typing...',
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+              ],
+            ),
           ],
         ),
       ),
@@ -108,22 +195,32 @@ class _ChatScreenState extends State<ChatScreen> {
                 final message = messages[index];
                 final isMe = message.senderId == widget.currentUser.id;
 
-                return Align(
-                  alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: isMe ? Colors.blue : Colors.grey[300],
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      message.message,
-                      style: TextStyle(
-                        color: isMe ? Colors.white : Colors.black,
+                return Column(
+                  crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      margin: const EdgeInsets.symmetric(vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isMe ? Colors.blue : Colors.grey[300],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        message.message,
+                        style: TextStyle(
+                          color: isMe ? Colors.white : Colors.black,
+                        ),
                       ),
                     ),
-                  ),
+                    if (isMe)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Text(
+                          message.status,
+                          style: const TextStyle(fontSize: 10, color: Colors.grey),
+                        ),
+                      ),
+                  ],
                 );
               },
             ),
@@ -146,6 +243,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
+                    onChanged: _onTypingChanged,
                     decoration: const InputDecoration(
                       hintText: 'Type a message...',
                       border: InputBorder.none,
@@ -168,6 +266,8 @@ class _ChatScreenState extends State<ChatScreen> {
   void dispose() {
     _messageController.dispose();
     _scrollController.dispose();
+    _typingTimer?.cancel();
+    _updateTypingStatus(false);
     super.dispose();
   }
 }

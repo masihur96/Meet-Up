@@ -37,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     _listenToAllUsers();
     getUser();
+    _updateOnlineStatus(true);
   }
 
   // void _startAutoEndTimer() {
@@ -241,10 +242,15 @@ class _HomeScreenState extends State<HomeScreen> {
   void dispose() {
     _usersSubscription?.cancel();
     _callingTimer?.cancel();
+    _updateOnlineStatus(false);
     super.dispose();
   }
 
-
+  void _updateOnlineStatus(bool isOnline) {
+    if (userModel != null) {
+      _database.child('users/${userModel!.id}/status').set(isOnline ? 'online' : 'offline');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
