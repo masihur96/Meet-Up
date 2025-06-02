@@ -2,12 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
-import 'package:meet_check/calling_screen.dart';
 import 'package:meet_check/screens/bounching_dialog.dart';
 import 'package:meet_check/screens/custom_size.dart';
+import 'package:meet_check/screens/register_screen.dart';
 import 'package:meet_check/service/call_service.dart';
 import 'package:meet_check/service/fcm_service.dart';
 import 'package:meet_check/service/local_storage_service.dart';
+import 'calling_screen.dart';
 import 'model/user_model.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -101,10 +102,6 @@ class _HomeScreenState extends State<HomeScreen> {
       callId: _currentCallId!,
     );
 
-    print("Show Dialog");
-
-
-
 
     _callingTimer = Timer(const Duration(seconds: 35), () {
       if (mounted) {
@@ -127,17 +124,26 @@ class _HomeScreenState extends State<HomeScreen> {
         final data = Map<String, dynamic>.from(event.snapshot.value as Map);
         if (data['status'] == 'accepted') {
 
-          _callService.stopCallingBeep();
+
 
 
           if (mounted) {
             setState(() {
               _isCalling = false;
             });
+
+            _callService.stopCallingBeep();
             Navigator.pop(context);
 
           }
-          _joinMeeting(_currentCallId!, userModel!);
+          Navigator.push(context, MaterialPageRoute(builder: (_)=> CallingScreen(
+            callerName: userModel!.name,
+            meetingId: user.id,
+            isVideo: _isVideoEnabled,
+          )));
+
+
+          // _joinMeeting(_currentCallId!, userModel!);
         }else if(data['status'] == 'calling'){
           if (mounted) {
             setState(() {
@@ -146,15 +152,38 @@ class _HomeScreenState extends State<HomeScreen> {
           }
 
 
-        }else{
-          _callService.stopCallingBeep();
-          _callingTimer?.cancel();
+        }else if(data['status'] == 'declined') {
 
           if (mounted) {
             setState(() {
               _isCalling = false;
             });
-             Navigator.pop(context);
+            _callService.stopCallingBeep();
+            _callingTimer?.cancel();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text('${user.name} rejected the call')),
+            );
+          }
+
+
+        }  if (data['status'] == 'cancelled' || data['status'] == 'timeout') {
+
+
+
+
+
+
+          if (mounted) {
+            setState(() {
+              _isCalling = false;
+            });
+            _callService.stopCallingBeep();
+            _callingTimer?.cancel();
+
+
+
+              Navigator.pop(context);
+
           }
 
         }
@@ -186,16 +215,17 @@ class _HomeScreenState extends State<HomeScreen> {
               IconButton(
                 icon: const Icon(Icons.call_end, color: Colors.red),
                 onPressed: () async{
-                  callService.stopCallingBeep();
-                  _callService. updateUserStatus(
-                    userId: user.id,
-                    newStatus: 'cancelled',
-                  );
+
                   if(mounted){
                     setState(() {
                       _isCalling = false;
                     });
-                    Navigator.pop(context);
+                    callService.stopCallingBeep();
+                    // _callService. updateUserStatus(
+                    //   userId: user.id,
+                    //   newStatus: 'cancelled',
+                    // );
+                     Navigator.pop(context);
                   }
                 },
               ),
@@ -224,7 +254,9 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
             icon: const Icon(Icons.logout),
             onPressed: () async {
-              getUser();
+              LocalUserStorage.clearUser();
+              Navigator.push(context, MaterialPageRoute(builder: (_)=> const RegisterScreen()));
+
             },
           ),
         ],
@@ -296,7 +328,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                 icon: const Icon(Icons.message),
                                 color: Colors.blue,
                                 tooltip: 'Message',
-                                onPressed: () => _makeCall(user),
+                                onPressed: () {
+
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(content: Text('Messaging feature not implemented yet')),
+                                  );
+
+                                },
                               ),
                               IconButton(
                                 icon: const Icon(Icons.call),
