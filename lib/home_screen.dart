@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:jitsi_meet_flutter_sdk/jitsi_meet_flutter_sdk.dart';
 import 'package:meet_check/screens/bounching_dialog.dart';
+import 'package:meet_check/screens/chat_screen.dart';
 import 'package:meet_check/screens/custom_size.dart';
 import 'package:meet_check/screens/register_screen.dart';
 import 'package:meet_check/service/call_service.dart';
@@ -330,9 +331,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                 tooltip: 'Message',
                                 onPressed: () {
 
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(content: Text('Messaging feature not implemented yet')),
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => ChatScreen(
+                                        receiver: user,
+                                        currentUser: userModel!,
+                                      ),
+                                    ),
                                   );
+
+                                  // ScaffoldMessenger.of(context).showSnackBar(
+                                  //   const SnackBar(content: Text('Messaging feature not implemented yet')),
+                                  // );
 
                                 },
                               ),
