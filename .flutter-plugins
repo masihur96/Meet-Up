@@ -1,16 +1,21 @@
 # This is a generated file; do not edit or check into version control.
 audio_session=/home/masihur/.pub-cache/hosted/pub.dev/audio_session-0.2.2/
 device_info_plus=/home/masihur/.pub-cache/hosted/pub.dev/device_info_plus-11.3.0/
+emoji_picker_flutter=/home/masihur/.pub-cache/hosted/pub.dev/emoji_picker_flutter-4.3.0/
+file_picker=/home/masihur/.pub-cache/hosted/pub.dev/file_picker-10.1.9/
 firebase_core=/home/masihur/.pub-cache/hosted/pub.dev/firebase_core-3.13.1/
 firebase_core_web=/home/masihur/.pub-cache/hosted/pub.dev/firebase_core_web-2.23.0/
 firebase_database=/home/masihur/.pub-cache/hosted/pub.dev/firebase_database-11.3.6/
 firebase_database_web=/home/masihur/.pub-cache/hosted/pub.dev/firebase_database_web-0.2.6+12/
 firebase_messaging=/home/masihur/.pub-cache/hosted/pub.dev/firebase_messaging-15.2.6/
 firebase_messaging_web=/home/masihur/.pub-cache/hosted/pub.dev/firebase_messaging_web-3.10.6/
+firebase_storage=/home/masihur/.pub-cache/hosted/pub.dev/firebase_storage-12.4.6/
+firebase_storage_web=/home/masihur/.pub-cache/hosted/pub.dev/firebase_storage_web-3.10.13/
 flutter_callkit_incoming=/home/masihur/.pub-cache/hosted/pub.dev/flutter_callkit_incoming-2.5.2/
 flutter_local_notifications=/home/masihur/.pub-cache/hosted/pub.dev/flutter_local_notifications-19.2.1/
 flutter_local_notifications_linux=/home/masihur/.pub-cache/hosted/pub.dev/flutter_local_notifications_linux-6.0.0/
 flutter_local_notifications_windows=/home/masihur/.pub-cache/hosted/pub.dev/flutter_local_notifications_windows-1.0.0/
+flutter_plugin_android_lifecycle=/home/masihur/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.28/
 jitsi_meet_flutter_sdk=/home/masihur/.pub-cache/hosted/pub.dev/jitsi_meet_flutter_sdk-11.1.1/
 just_audio=/home/masihur/.pub-cache/hosted/pub.dev/just_audio-0.10.3/
 just_audio_web=/home/masihur/.pub-cache/hosted/pub.dev/just_audio_web-0.4.16/

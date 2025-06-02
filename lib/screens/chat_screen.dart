@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:meet_check/model/message_model.dart';
 import 'package:meet_check/model/user_model.dart';
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 
 class ChatScreen extends StatefulWidget {
   final UserModel receiver;
@@ -26,6 +27,7 @@ class _ChatScreenState extends State<ChatScreen> {
   bool isTyping = false;
   Timer? _typingTimer;
   bool isReceiverOnline = false;
+  bool _showEmojiPicker = false;
 
   @override
   void initState() {
@@ -135,11 +137,23 @@ class _ChatScreenState extends State<ChatScreen> {
       message: _messageController.text.trim(),
       timestamp: DateTime.now(),
       messageId: messageId,
+      type: 'text',
     );
 
     await _database.child('chats/$chatId/messages/$messageId').set(message.toMap());
     _messageController.clear();
     _updateTypingStatus(false);
+  }
+
+  Future<void> _pickAndSendFile() async {
+    // Implement file picking and sending logic
+    // You'll need to add file_picker package
+    // Example implementation:
+    // FilePickerResult? result = await FilePicker.platform.pickFiles();
+    // if (result != null) {
+    //   File file = File(result.files.single.path!);
+    //   // Upload file to storage and send message
+    // }
   }
 
   @override
@@ -205,12 +219,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         color: isMe ? Colors.blue : Colors.grey[300],
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Text(
-                        message.message,
-                        style: TextStyle(
-                          color: isMe ? Colors.white : Colors.black,
-                        ),
-                      ),
+                      child: _buildMessageContent(message),
                     ),
                     if (isMe)
                       Padding(
@@ -225,6 +234,15 @@ class _ChatScreenState extends State<ChatScreen> {
               },
             ),
           ),
+          if (_showEmojiPicker)
+            SizedBox(
+              height: 250,
+              child: EmojiPicker(
+                onEmojiSelected: (category, emoji) {
+                  _messageController.text += emoji.emoji;
+                },
+              ),
+            ),
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
@@ -240,6 +258,18 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
             child: Row(
               children: [
+                IconButton(
+                  icon: const Icon(Icons.attach_file),
+                  onPressed: _pickAndSendFile,
+                ),
+                IconButton(
+                  icon: Icon(_showEmojiPicker ? Icons.keyboard : Icons.emoji_emotions),
+                  onPressed: () {
+                    setState(() {
+                      _showEmojiPicker = !_showEmojiPicker;
+                    });
+                  },
+                ),
                 Expanded(
                   child: TextField(
                     controller: _messageController,
@@ -260,6 +290,34 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildMessageContent(MessageModel message) {
+    switch (message.type) {
+      case 'text':
+        return Text(
+          message.message,
+          style: TextStyle(
+            color: message.senderId == widget.currentUser.id ? Colors.white : Colors.black,
+          ),
+        );
+      case 'file':
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.attach_file, color: message.senderId == widget.currentUser.id ? Colors.white : Colors.black),
+            const SizedBox(width: 8),
+            Text(
+              message.message,
+              style: TextStyle(
+                color: message.senderId == widget.currentUser.id ? Colors.white : Colors.black,
+              ),
+            ),
+          ],
+        );
+      default:
+        return Text(message.message);
+    }
   }
 
   @override
