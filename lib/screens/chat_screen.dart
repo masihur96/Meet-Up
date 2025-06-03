@@ -3,15 +3,14 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:meet_check/model/message_model.dart';
 import 'package:meet_check/model/user_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
-import 'package:meet_check/screens/custom_size.dart';
 import 'package:meet_check/screens/full_screen_video_player.dart';
 import 'package:meet_check/screens/video_preview.dart';
 import 'package:mime/mime.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'audio_message_preview.dart';
 import 'document_preview.dart';
 
@@ -239,27 +238,8 @@ class _ChatScreenState extends State<ChatScreen> {
 
       case 'document':
         return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => Scaffold(
-                  appBar: AppBar(title: Text(message.fileName ?? 'Document')),
-                  body: Center(
-                    child: PDFView(
-                      filePath: message.message,
-                      enableSwipe: true,
-                      swipeHorizontal: true,
-                      autoSpacing: true,
-                      pageFling: true,
-                      pageSnap: true,
-                      fitPolicy: FitPolicy.BOTH,
-                      preventLinkNavigation: false,
-                    ),
-                  ),
-                ),
-              ),
-            );
+          onTap:() {
+            _launchUrl(message.message);
           },
           child: DocumentPreview(url: message.message, isSender: isMe, filename: message.fileName!),
         );
@@ -294,6 +274,12 @@ class _ChatScreenState extends State<ChatScreen> {
             Flexible(child: Text(message.fileName ?? 'File', style: TextStyle(color: color, decoration: TextDecoration.underline))),
           ],
         );
+    }
+  }
+
+  Future<void> _launchUrl(String url) async {
+    if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
     }
   }
 
