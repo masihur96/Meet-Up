@@ -6,6 +6,8 @@ class UserModel {
   final String avatarUrl;
   final String token;
   final String status;
+  final List<String> pinnedUserIds; // New
+  final int unseenMessageCount; // New
 
   UserModel({
     required this.id,
@@ -13,6 +15,8 @@ class UserModel {
     this.avatarUrl = 'https://i.pravatar.cc/100',
     this.token = '',
     this.status = 'offline',
+    this.pinnedUserIds=const [], // New
+    this.unseenMessageCount = 0,
   });
 
   Map<String, dynamic> toMap() {
@@ -22,6 +26,8 @@ class UserModel {
       'avatarUrl': avatarUrl,
       'token': token,
       'status': status,
+      'pinnedUserIds': pinnedUserIds,
+      'unseenMessageCount': unseenMessageCount,
     };
   }
 
@@ -32,6 +38,8 @@ class UserModel {
       avatarUrl: map['avatarUrl'] ?? 'https://i.pravatar.cc/100',
       token: map['token'] ?? '',
       status: map['status'] ?? 'offline',
+      pinnedUserIds: map['pinnedUserIds'] ?? [], // New
+      unseenMessageCount: map['unseenMessageCount'] ?? 0, // New
     );
   }
 

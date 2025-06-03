@@ -256,7 +256,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Meeting App'),
+        title: const Text('Meetup'),
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
