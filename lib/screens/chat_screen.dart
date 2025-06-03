@@ -6,7 +6,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:meet_check/model/message_model.dart';
 import 'package:meet_check/model/user_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:meet_check/screens/custom_size.dart';
+import 'package:meet_check/screens/full_screen_video_player.dart';
+import 'package:meet_check/screens/video_preview.dart';
+import 'package:mime/mime.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'audio_message_preview.dart';
+import 'document_preview.dart';
 
 class ChatScreen extends StatefulWidget {
   final UserModel receiver;
@@ -84,9 +91,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void _onTypingChanged(String text) {
     if (_typingTimer?.isActive ?? false) _typingTimer!.cancel();
-    
+
     _updateTypingStatus(true);
-    
+
     _typingTimer = Timer(const Duration(seconds: 2), () {
       _updateTypingStatus(false);
     });
@@ -107,22 +114,23 @@ class _ChatScreenState extends State<ChatScreen> {
           messages = messagesList;
         });
 
-        // Scroll to bottom
+        // FIXED: Ensure scroll happens after frame & layout
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (_scrollController.hasClients) {
-            _scrollController.animateTo(
-              _scrollController.position.maxScrollExtent,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOut,
-            );
-          }
+          Future.delayed(Duration.zero, () {
+            if (_scrollController.hasClients) {
+              _scrollController.animateTo(
+                _scrollController.position.maxScrollExtent,
+                duration: const Duration(milliseconds: 300),
+                curve: Curves.easeOut,
+              );
+            }
+          });
         });
       }
     });
   }
 
   String _getChatId() {
-    // Create a unique chat ID by sorting user IDs
     List<String> ids = [widget.currentUser.id, widget.receiver.id];
     ids.sort();
     return '${ids[0]}_${ids[1]}';
@@ -148,52 +156,110 @@ class _ChatScreenState extends State<ChatScreen> {
     _updateTypingStatus(false);
   }
 
-
-
-  // Future<void> _pickAndSendFile() async {
-  //   // Implement file picking and sending logic
-  //   // You'll need to add file_picker package
-  //   // Example implementation:
-  //   // FilePickerResult? result = await FilePicker.platform.pickFiles();
-  //   // if (result != null) {
-  //   //   File file = File(result.files.single.path!);
-  //   //   // Upload file to storage and send message
-  //   // }
-  // }
-
   Future<void> uploadFile() async {
-    final result = await FilePicker.platform.pickFiles();
+    final result = await FilePicker.platform.pickFiles(allowMultiple: true, type: FileType.any);
 
     if (result != null) {
-      final file = File(result.files.single.path!);
-      final fileName = result.files.single.name;
+      for (var file in result.files) {
+        final filePath = file.path!;
+        final fileName = file.name;
+        final fileType = lookupMimeType(filePath);
+        final category = getFileCategory(fileType);
 
-      final storage = Supabase.instance.client.storage;
+        final storage = Supabase.instance.client.storage;
 
-      try {
-        final response = await storage
-            .from('meetup-chat')   // your Supabase storage bucket name
-            .upload(fileName, file);
+        try {
+          final response = await storage.from('meetup-chat').upload(fileName, File(filePath));
+          if (response.isNotEmpty) {
+            final publicUrl = storage.from('meetup-chat').getPublicUrl(fileName);
 
-        if (response.isNotEmpty) {
+            String chatId = _getChatId();
+            MessageModel message = MessageModel(
+              senderId: widget.currentUser.id,
+              receiverId: widget.receiver.id,
+              message: publicUrl,
+              timestamp: DateTime.now(),
+              messageId: DateTime.now().millisecondsSinceEpoch.toString(),
+              type: category,
+              fileName: fileName,
+            );
 
-          final publicUrl = Supabase.instance.client.storage
-              .from('meetup-chat')
-              .getPublicUrl(fileName);
-          print('Uploaded: $publicUrl');
-        } else {
-          print('Upload failed.');
+            await _database.child('chats/$chatId/messages/${message.messageId}').set(message.toMap());
+          }
+        } catch (e) {
+          debugPrint('Upload error: $e');
         }
-      } catch (e) {
-        print('Error: $e');
-        return;
       }
-
     }
   }
 
+  String getFileCategory(String? mimeType) {
+    if (mimeType == null) return 'other';
+    if (mimeType.startsWith('image/')) return 'image';
+    if (mimeType.startsWith('video/')) return 'video';
+    if (mimeType.startsWith('audio/')) return 'audio';
+    if (mimeType == 'application/pdf') return 'document';
+    if (mimeType.startsWith('text/')) return 'text';
+    return 'other';
+  }
+
+  Widget _buildMessageContent(MessageModel message) {
+    final isMe = message.senderId == widget.currentUser.id;
+    final color = isMe ? Colors.white : Colors.black;
 
 
+    switch (message.type) {
+      case 'text':
+        return Text(message.message, style: TextStyle(color: color));
+      case 'image':
+        return GestureDetector(
+          onTap: () {}, // Add full-screen viewer logic if needed
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Image.network(
+                  message.message,
+                  fit: BoxFit.fill, // important to avoid scaling
+                  alignment: Alignment.topLeft,
+                ),
+
+                if (message.fileName != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2.0),
+                    child: Text(
+                      message.fileName!,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        );
+
+      case 'document':
+        return DocumentPreview(url: message.message, isSender: isMe,filename: message.fileName!,);
+      case 'video':
+
+        return VideoPreview(
+          videoUrl: message.message,
+          fileName: message.fileName,
+        );
+
+      case 'audio':
+
+        return AudioMessagePreview(audioUrl: message.message, color: color);
+      default:
+        return Row(
+          children: [
+            Icon(Icons.attach_file, color: color),
+            const SizedBox(width: 8),
+            Flexible(child: Text(message.fileName ?? 'File', style: TextStyle(color: color, decoration: TextDecoration.underline))),
+          ],
+        );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -203,9 +269,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Stack(
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(widget.receiver.avatarUrl),
-                ),
+                CircleAvatar(backgroundImage: NetworkImage(widget.receiver.avatarUrl)),
                 if (isReceiverOnline)
                   Positioned(
                     right: 0,
@@ -228,10 +292,7 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 Text(widget.receiver.name),
                 if (isTyping)
-                  const Text(
-                    'typing...',
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                  ),
+                  const Text('typing...', style: TextStyle(fontSize: 12, color: Colors.grey)),
               ],
             ),
           ],
@@ -263,10 +324,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     if (isMe)
                       Padding(
                         padding: const EdgeInsets.only(right: 8.0),
-                        child: Text(
-                          message.status,
-                          style: const TextStyle(fontSize: 10, color: Colors.grey),
-                        ),
+                        child: Text(message.status, style: const TextStyle(fontSize: 10, color: Colors.grey)),
                       ),
                   ],
                 );
@@ -287,20 +345,12 @@ class _ChatScreenState extends State<ChatScreen> {
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
-                  spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, -1),
-                ),
+                BoxShadow(color: Colors.grey.withOpacity(0.2), spreadRadius: 1, blurRadius: 3, offset: const Offset(0, -1)),
               ],
             ),
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.attach_file),
-                  onPressed: uploadFile,
-                ),
+                IconButton(icon: const Icon(Icons.attach_file), onPressed: uploadFile),
                 IconButton(
                   icon: Icon(_showEmojiPicker ? Icons.keyboard : Icons.emoji_emotions),
                   onPressed: () {
@@ -313,50 +363,16 @@ class _ChatScreenState extends State<ChatScreen> {
                   child: TextField(
                     controller: _messageController,
                     onChanged: _onTypingChanged,
-                    decoration: const InputDecoration(
-                      hintText: 'Type a message...',
-                      border: InputBorder.none,
-                    ),
+                    decoration: const InputDecoration(hintText: 'Type a message...', border: InputBorder.none),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: _sendMessage,
-                ),
+                IconButton(icon: const Icon(Icons.send), onPressed: _sendMessage),
               ],
             ),
           ),
         ],
       ),
     );
-  }
-
-  Widget _buildMessageContent(MessageModel message) {
-    switch (message.type) {
-      case 'text':
-        return Text(
-          message.message,
-          style: TextStyle(
-            color: message.senderId == widget.currentUser.id ? Colors.white : Colors.black,
-          ),
-        );
-      case 'file':
-        return Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.attach_file, color: message.senderId == widget.currentUser.id ? Colors.white : Colors.black),
-            const SizedBox(width: 8),
-            Text(
-              message.message,
-              style: TextStyle(
-                color: message.senderId == widget.currentUser.id ? Colors.white : Colors.black,
-              ),
-            ),
-          ],
-        );
-      default:
-        return Text(message.message);
-    }
   }
 
   @override
