@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:meet_check/model/message_model.dart';
 import 'package:meet_check/model/user_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ChatScreen extends StatefulWidget {
   final UserModel receiver;
@@ -145,16 +148,52 @@ class _ChatScreenState extends State<ChatScreen> {
     _updateTypingStatus(false);
   }
 
-  Future<void> _pickAndSendFile() async {
-    // Implement file picking and sending logic
-    // You'll need to add file_picker package
-    // Example implementation:
-    // FilePickerResult? result = await FilePicker.platform.pickFiles();
-    // if (result != null) {
-    //   File file = File(result.files.single.path!);
-    //   // Upload file to storage and send message
-    // }
+
+
+  // Future<void> _pickAndSendFile() async {
+  //   // Implement file picking and sending logic
+  //   // You'll need to add file_picker package
+  //   // Example implementation:
+  //   // FilePickerResult? result = await FilePicker.platform.pickFiles();
+  //   // if (result != null) {
+  //   //   File file = File(result.files.single.path!);
+  //   //   // Upload file to storage and send message
+  //   // }
+  // }
+
+  Future<void> uploadFile() async {
+    final result = await FilePicker.platform.pickFiles();
+
+    if (result != null) {
+      final file = File(result.files.single.path!);
+      final fileName = result.files.single.name;
+
+      final storage = Supabase.instance.client.storage;
+
+      try {
+        final response = await storage
+            .from('meetup-chat')   // your Supabase storage bucket name
+            .upload(fileName, file);
+
+        if (response.isNotEmpty) {
+
+          final publicUrl = Supabase.instance.client.storage
+              .from('meetup-chat')
+              .getPublicUrl(fileName);
+          print('Uploaded: $publicUrl');
+        } else {
+          print('Upload failed.');
+        }
+      } catch (e) {
+        print('Error: $e');
+        return;
+      }
+
+    }
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -260,7 +299,7 @@ class _ChatScreenState extends State<ChatScreen> {
               children: [
                 IconButton(
                   icon: const Icon(Icons.attach_file),
-                  onPressed: _pickAndSendFile,
+                  onPressed: uploadFile,
                 ),
                 IconButton(
                   icon: Icon(_showEmojiPicker ? Icons.keyboard : Icons.emoji_emotions),

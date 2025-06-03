@@ -3,6 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:meet_check/service/call_service.dart';
 import 'package:meet_check/service/fcm_service.dart';
 import 'package:meet_check/service/local_storage_service.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'firebase_options.dart';
 import 'home_screen.dart';
 import 'screens/register_screen.dart';
@@ -18,6 +19,13 @@ void main() async{
   );
   await FCMService.init();
   CallService().setupCallkitEventHandler(); // ✅ add this
+
+
+  await Supabase.initialize(
+    url: 'https://yljdgsjwiidlfztlzfvg.supabase.co',
+    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlsamRnc2p3aWlkbGZ6dGx6ZnZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5MDc3MTgsImV4cCI6MjA2MzQ4MzcxOH0.f1uV2nz4YUDLJkyIcy--kOWLqvSruHxgSXzo1MjszOU',
+  );
+
   runApp(const MyApp());
 }
 

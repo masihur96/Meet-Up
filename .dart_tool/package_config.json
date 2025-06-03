@@ -8,6 +8,30 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "app_links",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/app_links-6.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "app_links_linux",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/app_links_linux-1.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "app_links_platform_interface",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/app_links_platform_interface-2.0.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "app_links_web",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/app_links_web-1.0.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
       "name": "args",
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/args-2.7.0",
       "packageUri": "lib/",
@@ -266,6 +290,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "functions_client",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/functions_client-2.4.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "google_identity_services_web",
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/google_identity_services_web-0.3.3+1",
       "packageUri": "lib/",
@@ -276,6 +306,18 @@
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/googleapis_auth-2.0.0",
       "packageUri": "lib/",
       "languageVersion": "3.6"
+    },
+    {
+      "name": "gotrue",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/gotrue-2.12.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "gtk",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/gtk-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "http",
@@ -320,6 +362,12 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "jwt_decode",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/jwt_decode-0.3.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "leak_tracker",
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/leak_tracker-10.0.7",
       "packageUri": "lib/",
@@ -344,6 +392,12 @@
       "languageVersion": "3.6"
     },
     {
+      "name": "logging",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/logging-1.3.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "matcher",
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/matcher-0.12.16+1",
       "packageUri": "lib/",
@@ -360,6 +414,12 @@
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/meta-1.15.0",
       "packageUri": "lib/",
       "languageVersion": "2.12"
+    },
+    {
+      "name": "mime",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/mime-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
     },
     {
       "name": "path",
@@ -418,6 +478,24 @@
     {
       "name": "plugin_platform_interface",
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/plugin_platform_interface-2.1.8",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "postgrest",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/postgrest-2.4.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "realtime_client",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/realtime_client-2.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "retry",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/retry-3.1.2",
       "packageUri": "lib/",
       "languageVersion": "3.0"
     },
@@ -494,6 +572,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "storage_client",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/storage_client-2.4.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "stream_channel",
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/stream_channel-2.1.2",
       "packageUri": "lib/",
@@ -504,6 +588,18 @@
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/string_scanner-1.3.0",
       "packageUri": "lib/",
       "languageVersion": "3.1"
+    },
+    {
+      "name": "supabase",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/supabase-2.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "supabase_flutter",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/supabase_flutter-2.9.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
     },
     {
       "name": "synchronized",
@@ -542,6 +638,54 @@
       "languageVersion": "2.17"
     },
     {
+      "name": "url_launcher",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/url_launcher-6.3.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "url_launcher_android",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/url_launcher_android-6.3.16",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "url_launcher_ios",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/url_launcher_ios-6.3.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "url_launcher_linux",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/url_launcher_linux-3.2.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "url_launcher_macos",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/url_launcher_macos-3.2.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
+    },
+    {
+      "name": "url_launcher_platform_interface",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/url_launcher_platform_interface-2.3.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.1"
+    },
+    {
+      "name": "url_launcher_web",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/url_launcher_web-2.4.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.6"
+    },
+    {
+      "name": "url_launcher_windows",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/url_launcher_windows-3.1.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "uuid",
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/uuid-4.5.1",
       "packageUri": "lib/",
@@ -564,6 +708,18 @@
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/web-1.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.4"
+    },
+    {
+      "name": "web_socket",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/web_socket-1.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
+      "name": "web_socket_channel",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/web_socket_channel-3.0.3",
+      "packageUri": "lib/",
+      "languageVersion": "3.3"
     },
     {
       "name": "win32",
@@ -590,13 +746,19 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "yet_another_json_isolate",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/yet_another_json_isolate-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
       "name": "meet_check",
       "rootUri": "../",
       "packageUri": "lib/",
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-06-02T11:02:56.241536Z",
+  "generated": "2025-06-03T06:56:58.999094Z",
   "generator": "pub",
   "generatorVersion": "3.6.0",
   "flutterRoot": "file:///home/masihur/development/flutter",
