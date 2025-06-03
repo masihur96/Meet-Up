@@ -326,6 +326,12 @@
       "languageVersion": "3.4"
     },
     {
+      "name": "flutter_pdfview",
+      "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/flutter_pdfview-1.4.0+1",
+      "packageUri": "lib/",
+      "languageVersion": "2.17"
+    },
+    {
       "name": "flutter_plugin_android_lifecycle",
       "rootUri": "file:///home/masihur/.pub-cache/hosted/pub.dev/flutter_plugin_android_lifecycle-2.0.28",
       "packageUri": "lib/",
@@ -908,7 +914,7 @@
       "languageVersion": "3.6"
     }
   ],
-  "generated": "2025-06-03T10:23:57.667011Z",
+  "generated": "2025-06-03T10:29:40.200988Z",
   "generator": "pub",
   "generatorVersion": "3.6.0",
   "flutterRoot": "file:///home/masihur/development/flutter",

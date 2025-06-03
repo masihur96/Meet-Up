@@ -51,6 +51,8 @@ dependencies:
   video_player: ^2.9.5
   chewie: ^1.11.3
   audioplayers: ^6.4.0
+  flutter_pdfview: ^1.4.0+1
+
 
 
   # The following adds the Cupertino Icons font to your application.

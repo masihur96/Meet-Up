@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:meet_check/model/message_model.dart';
 import 'package:meet_check/model/user_model.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -11,7 +12,6 @@ import 'package:meet_check/screens/full_screen_video_player.dart';
 import 'package:meet_check/screens/video_preview.dart';
 import 'package:mime/mime.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-
 import 'audio_message_preview.dart';
 import 'document_preview.dart';
 
@@ -20,10 +20,10 @@ class ChatScreen extends StatefulWidget {
   final UserModel currentUser;
 
   const ChatScreen({
-    Key? key,
+    super.key,
     required this.receiver,
     required this.currentUser,
-  }) : super(key: key);
+  });
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -207,7 +207,6 @@ class _ChatScreenState extends State<ChatScreen> {
     final isMe = message.senderId == widget.currentUser.id;
     final color = isMe ? Colors.white : Colors.black;
 
-
     switch (message.type) {
       case 'text':
         return Text(message.message, style: TextStyle(color: color));
@@ -239,17 +238,54 @@ class _ChatScreenState extends State<ChatScreen> {
         );
 
       case 'document':
-        return DocumentPreview(url: message.message, isSender: isMe,filename: message.fileName!,);
-      case 'video':
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => Scaffold(
+                  appBar: AppBar(title: Text(message.fileName ?? 'Document')),
+                  body: Center(
+                    child: PDFView(
+                      filePath: message.message,
+                      enableSwipe: true,
+                      swipeHorizontal: true,
+                      autoSpacing: true,
+                      pageFling: true,
+                      pageSnap: true,
+                      fitPolicy: FitPolicy.BOTH,
+                      preventLinkNavigation: false,
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+          child: DocumentPreview(url: message.message, isSender: isMe, filename: message.fileName!),
+        );
 
-        return VideoPreview(
-          videoUrl: message.message,
-          fileName: message.fileName,
+      case 'video':
+        return GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FullScreenVideoPlayer(videoUrl: message.message),
+              ),
+            );
+          },
+          child: VideoPreview(
+            videoUrl: message.message,
+            fileName: message.fileName,
+          ),
         );
 
       case 'audio':
-
-        return AudioMessagePreview(audioUrl: message.message, color: color);
+        return AudioMessagePreview(
+          audioUrl: message.message,
+          color: color,
+          fileName: message.fileName,
+        );
       default:
         return Row(
           children: [
