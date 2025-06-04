@@ -69,7 +69,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
           name: _nameController.text.trim(),
           token: token ?? "",
           status: "",
+          avatarUrl: 'https://i.pravatar.cc/100', // Default avatar
+          pinnedUserIds: ["data"], // New
+          unseenMessageCount: 0, // New
+
         );
+        print(":::::${user.toMap()}");
 
         await _database.child('users').child(userId).set(user.toMap());
         await LocalUserStorage.saveUser(user);

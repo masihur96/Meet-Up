@@ -38,8 +38,10 @@ class UserModel {
       avatarUrl: map['avatarUrl'] ?? 'https://i.pravatar.cc/100',
       token: map['token'] ?? '',
       status: map['status'] ?? 'offline',
-      pinnedUserIds: map['pinnedUserIds'] ?? [], // New
-      unseenMessageCount: map['unseenMessageCount'] ?? 0, // New
+      pinnedUserIds: map['pinnedUserIds'] != null
+          ? List<String>.from(map['pinnedUserIds'])
+          : const [],
+      unseenMessageCount: map['unseenMessageCount'] ?? 0,
     );
   }
 

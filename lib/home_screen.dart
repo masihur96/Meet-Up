@@ -40,17 +40,7 @@ class _HomeScreenState extends State<HomeScreen> {
     _updateOnlineStatus(true);
   }
 
-  // void _startAutoEndTimer() {
-  //   _autoEndTimer = Timer(const Duration(seconds: 30), () {
-  //     if (!_isConnected) {
-  //       print("No participant joined. Ending call.");
-  //       _callService.endCall();
-  //       _callService.stopCallingBeep();
-  //       _autoEndTimer!.cancel();
-  //       Navigator.pop(context);
-  //     }
-  //   });
-  // }
+
 
   UserModel ? userModel;
 
@@ -60,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     });
 
-    print(userModel?.name??"Empty");
+    print("vgdfgdgdg${userModel?.name??"Empty"}");
   }
 
   List<UserModel> allUsers = [];

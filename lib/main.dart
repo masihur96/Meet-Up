@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:meet_check/screens/messaging_home_page.dart';
 import 'package:meet_check/service/call_service.dart';
 import 'package:meet_check/service/fcm_service.dart';
 import 'package:meet_check/service/local_storage_service.dart';
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
     if (userModel == null || userModel.name.isEmpty) {
       return const RegisterScreen();
     } else {
+      // return const MessagingHomePage();
       return const HomeScreen();
     }
   }
@@ -48,7 +50,11 @@ class MyApp extends StatelessWidget {
       navigatorKey: navigatorKey,
       title: 'Meeting App',
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: FutureBuilder<Widget>(
+      home:
+      // MessagingHomePage()
+
+
+      FutureBuilder<Widget>(
         future: getInitialScreen(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
