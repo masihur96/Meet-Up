@@ -1,3 +1,5 @@
+import 'package:meet_check/model/user_model.dart';
+
 class MessageModel {
   final String senderId;
   final String receiverId;
@@ -44,4 +46,17 @@ class MessageModel {
       fileName: map['fileName'] ?? '', // Default to 'text' if not provided
     );
   }
+}
+
+
+
+
+class MessageModelWithSender {
+  final UserModel sender; // Unique identifier for the message
+  final MessageModel message;
+
+  MessageModelWithSender({
+    required this.sender,
+    required this.message,
+  });
 }

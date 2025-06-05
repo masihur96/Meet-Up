@@ -1,10 +1,117 @@
 import 'package:flutter/material.dart';
+import 'package:meet_check/model/message_model.dart';
+import 'package:meet_check/model/user_model.dart';
 import 'package:meet_check/screens/custom_size.dart';
 
-class MessagingHomePage extends StatelessWidget {
+
+class MessagingHomePage extends StatefulWidget {
 
 
   const MessagingHomePage({super.key});
+
+  @override
+  State<MessagingHomePage> createState() => _MessagingHomePageState();
+}
+
+class _MessagingHomePageState extends State<MessagingHomePage> {
+  final List<MessageModelWithSender> pinnedChats = [
+
+
+    MessageModelWithSender(
+      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
+      message: MessageModel(
+        senderId: 'Masihur Rohman',
+        receiverId: 'user_2',
+        message: "That's awesome! ..",
+        timestamp: DateTime.now(),
+        messageId: 'msg_001',
+        status: 'sent',
+        type: 'text',
+      ),
+
+    ),
+    MessageModelWithSender(
+      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
+      message: MessageModel(
+        senderId: 'Masihur Rohman',
+        receiverId: 'user_2',
+        message: "That's awesome! ..",
+        timestamp: DateTime.now(),
+        messageId: 'msg_001',
+        status: 'sent',
+        type: 'text',
+      ),
+
+    ),
+    MessageModelWithSender(
+      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
+      message: MessageModel(
+        senderId: 'Masihur Rohman',
+        receiverId: 'user_2',
+        message: "That's awesome! ..",
+        timestamp: DateTime.now(),
+        messageId: 'msg_001',
+        status: 'sent',
+        type: 'text',
+      ),
+
+    ),
+    MessageModelWithSender(
+      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
+      message: MessageModel(
+        senderId: 'Masihur Rohman',
+        receiverId: 'user_2',
+        message: "That's awesome! ..",
+        timestamp: DateTime.now(),
+        messageId: 'msg_001',
+        status: 'sent',
+        type: 'text',
+      ),
+
+    ),
+    MessageModelWithSender(
+      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
+      message: MessageModel(
+        senderId: 'Masihur Rohman',
+        receiverId: 'user_2',
+        message: "That's awesome! ..",
+        timestamp: DateTime.now(),
+        messageId: 'msg_001',
+        status: 'sent',
+        type: 'text',
+      ),
+
+    ),
+    MessageModelWithSender(
+      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
+      message: MessageModel(
+        senderId: 'Masihur Rohman',
+        receiverId: 'user_2',
+        message: "That's awesome! ..",
+        timestamp: DateTime.now(),
+        messageId: 'msg_001',
+        status: 'sent',
+        type: 'text',
+      ),
+
+    ),
+    MessageModelWithSender(
+      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
+      message: MessageModel(
+        senderId: 'Masihur Rohman',
+        receiverId: 'user_2',
+        message: "That's awesome! ..",
+        timestamp: DateTime.now(),
+        messageId: 'msg_001',
+        status: 'sent',
+        type: 'text',
+      ),
+
+    )
+
+
+
+   ];
 
   @override
   Widget build(BuildContext context) {
@@ -44,18 +151,27 @@ class MessagingHomePage extends StatelessWidget {
             ),
             SizedBox(
               height: 200,
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 12,
-                mainAxisSpacing: 12,
+              child: GridView.builder(
+                shrinkWrap: false,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
-                children: [
-                  pinnedChatTile(context,"Mike Wazowski", "That's awesome! ..", "assets/images/user.png"),
-                  pinnedChatTile(context,"Darlene Steward", "Pls take a look at the..", "assets/images/user.png", unread: true),
-                  pinnedChatTile(context,"Gregory Robertson", "Preparing for next vac..", "assets/images/user.png"),
-                  pinnedChatTile(context,"Dwight Wilson", "I'd like to watch ...", "assets/images/user.png"),
-                ],
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 8,
+                  mainAxisSpacing: 12,
+                  childAspectRatio: 1.7, // ✅ width / height ratio (try 2.5 for rectangle)
+                ),
+
+                itemCount: pinnedChats.length, // your data list
+                itemBuilder: (context, index) {
+                  final chat = pinnedChats[index];
+                  return pinnedChatTile(
+                    context,
+                    chat,
+                    unread: chat.message.status == 'sent', // Example condition for unread
+                  );
+                },
               ),
+
             ),
             const Padding(
               padding: EdgeInsets.all(16.0),
@@ -79,7 +195,7 @@ class MessagingHomePage extends StatelessWidget {
     );
   }
 
-  Widget pinnedChatTile(BuildContext context,String name, String message, String imagePath, {bool unread = false}) {
+  Widget pinnedChatTile(BuildContext context,  MessageModelWithSender chat, {bool unread = false}) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -90,41 +206,49 @@ class MessagingHomePage extends StatelessWidget {
         ),
       ),
       padding: const EdgeInsets.all(8),
-      child: Stack(
+      child:Stack(
+        // ✅ Don’t expand — allow content to decide height
         children: [
           Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min, // ✅ auto height
             children: [
               Row(
                 children: [
                   CircleAvatar(
-                    backgroundImage: AssetImage(imagePath),
+                    radius: 20,
+                    backgroundImage: AssetImage(chat.sender.avatarUrl ?? "assets/images/user.png"),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      name,
+                      chat.sender.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      softWrap: false,
+
                     ),
                   ),
                 ],
               ),
-
-              Text(message, style: const TextStyle(fontSize: 11, color: Colors.black54), overflow: TextOverflow.ellipsis),
-
+              const SizedBox(height: 4),
+              Text(
+                chat.message.message,
+                style: const TextStyle(fontSize: 11, color: Colors.black54),
+                overflow: TextOverflow.ellipsis,
+              ),
             ],
           ),
-
-          Positioned(right: 0,
-            top: 0,child:  unread?
-    const Icon(Icons.circle, size: 14, color: Color(0xff7c3aed)) : const SizedBox.shrink(),
-          ),
+          if (unread)
+            const Positioned(
+              right: 0,
+              top: 0,
+              child: Icon(Icons.circle, size: 14, color: Color(0xff7c3aed)),
+            ),
         ],
-      ),
+      )
+
     );
   }
 }
@@ -136,14 +260,20 @@ class ChatTabBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          TabChip(label: "All chats", selected: true),
-          TabChip(label: "Personal"),
-          TabChip(label: "Work"),
-          TabChip(label: "Groups"),
-        ],
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            TabChip(label: "All chats", selected: true),
+            const SizedBox(width: 8),
+            TabChip(label: "Personal"),
+            const SizedBox(width: 8),
+            TabChip(label: "Work"),
+            const SizedBox(width: 8),
+            TabChip(label: "Groups"),
+          ],
+        ),
       ),
     );
   }

@@ -39,8 +39,8 @@ class MyApp extends StatelessWidget {
     if (userModel == null || userModel.name.isEmpty) {
       return const RegisterScreen();
     } else {
-      // return const MessagingHomePage();
-      return const HomeScreen();
+      return const MessagingHomePage();
+      // return const HomeScreen();
     }
   }
 
