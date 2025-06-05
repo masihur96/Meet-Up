@@ -1,7 +1,9 @@
+import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:meet_check/model/message_model.dart';
 import 'package:meet_check/model/user_model.dart';
 import 'package:dio/dio.dart';
 import 'package:googleapis_auth/auth_io.dart';
@@ -13,6 +15,7 @@ class FCMService {
 
 
   static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
+  final DatabaseReference _database = FirebaseDatabase.instance.ref();
   static final FlutterLocalNotificationsPlugin _localNotifications =
   FlutterLocalNotificationsPlugin();
 
@@ -196,8 +199,57 @@ class FCMService {
   }
 
 
+//Pin/Unpin chat
 
+  // Send message
+  Future<void> sendMessage(MessageModel message) async {
+    try {
+      final messageRef = _database.child('messages').push();
+      await messageRef.set(message.toJson());
+    } catch (e) {
+      print('Error sending message: $e');
+      rethrow;
+    }
+  }
 
+  // Get messages for a specific chat
+  Stream<List<MessageModelWithSender>> getMessages(String userId) {
+    return _database
+        .child('messages')
+        .orderByChild('timestamp')
+        .onValue
+        .map((event) {
+      if (event.snapshot.value == null) return [];
+      
+      final Map<dynamic, dynamic> messages = event.snapshot.value as Map;
+      return messages.entries.map((entry) {
+        final message = MessageModel.fromJson(entry.value);
+        // You'll need to fetch user data separately
+        return MessageModelWithSender(
+          sender: UserModel(
+            id: message.senderId,
+            name: message.senderId, // Replace with actual user data
+            avatarUrl: "assets/images/user.png",
+            token: "token_01"
+          ),
+          message: message,
+        );
+      }).toList();
+    });
+  }
+
+  // Pin/Unpin chat
+  Future<void> togglePinChat(String messageId, bool isPinned) async {
+    try {
+      await _database
+          .child('messages')
+          .child(messageId)
+          .update({'isPinned': isPinned});
+    } catch (e) {
+      print('Error toggling pin: $e');
+      rethrow;
+    }
+  }
 
 
 }

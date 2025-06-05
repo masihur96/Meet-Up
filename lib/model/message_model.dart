@@ -9,6 +9,7 @@ class MessageModel {
   final String status; // 'sent', 'delivered', 'read'
   final String type; // 'text', 'image', 'video', etc. (optional, can be added later)
   final String? fileName; // Optional field for image URL
+  final bool isPinned;
 
   MessageModel({
     required this.senderId,
@@ -19,6 +20,7 @@ class MessageModel {
     this.status = 'sent',
     this.type = 'text', // Default type is 'text'
     this.fileName = '', // Default type is 'text'
+    this.isPinned = false,
   });
 
   Map<String, dynamic> toMap() {
@@ -31,6 +33,20 @@ class MessageModel {
       'status': status,
       'type': type, // Include type in the map
       'fileName': fileName, // Include type in the map
+      'isPinned': isPinned,
+    };
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'senderId': senderId,
+      'receiverId': receiverId,
+      'message': message,
+      'timestamp': timestamp.toIso8601String(),
+      'messageId': messageId,
+      'status': status,
+      'type': type,
+      'isPinned': isPinned,
     };
   }
 
@@ -44,6 +60,20 @@ class MessageModel {
       status: map['status'] ?? 'sent',
       type: map['type'] ?? 'text', // Default to 'text' if not provided
       fileName: map['fileName'] ?? '', // Default to 'text' if not provided
+      isPinned: map['isPinned'] ?? false,
+    );
+  }
+
+  factory MessageModel.fromJson(Map<dynamic, dynamic> json) {
+    return MessageModel(
+      senderId: json['senderId'],
+      receiverId: json['receiverId'],
+      message: json['message'],
+      timestamp: DateTime.parse(json['timestamp']),
+      messageId: json['messageId'],
+      status: json['status'],
+      type: json['type'],
+      isPinned: json['isPinned'] ?? false,
     );
   }
 }

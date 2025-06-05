@@ -1,7 +1,12 @@
+import 'dart:async';
+
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:meet_check/model/message_model.dart';
 import 'package:meet_check/model/user_model.dart';
 import 'package:meet_check/screens/custom_size.dart';
+import 'package:meet_check/service/fcm_service.dart';
+
 
 
 class MessagingHomePage extends StatefulWidget {
@@ -14,104 +19,75 @@ class MessagingHomePage extends StatefulWidget {
 }
 
 class _MessagingHomePageState extends State<MessagingHomePage> {
-  final List<MessageModelWithSender> pinnedChats = [
+  final DatabaseReference _database = FirebaseDatabase.instance.ref();
+  final FCMService _firebaseService = FCMService();
+  List<MessageModelWithSender> pinnedChats = [];
+  List<MessageModelWithSender> recentChats = [];
+  StreamSubscription<DatabaseEvent>? _usersSubscription;
+  List<UserModel> allUsers = [];
+  @override
+  void initState() {
+    super.initState();
+    _loadMessages();
+    _listenToAllUsers();
+  }
+
+  void _listenToAllUsers() {
+    _usersSubscription = _database.child('users').onValue.listen((event) {
+      final data = event.snapshot.value;
+      if (data != null) {
+        final usersMap = Map<String, dynamic>.from(data as Map);
+        final usersList = usersMap.entries.map((entry) {
+          final userMap = Map<String, dynamic>.from(entry.value);
+          return UserModel.fromMap(userMap);
+        }).toList();
+
+        setState(() {
+          allUsers = usersList;
+        });
+      }
+    });
+  }
+
+  void _loadMessages() {
+    // Listen to messages
+    _firebaseService.getMessages('currentUserId').listen((messages) {
+      setState(() {
+        pinnedChats = messages.where((m) => m.message.isPinned).toList();
+        recentChats = messages.where((m) => !m.message.isPinned).toList();
+      });
+    });
+  }
+
+  // Add this method to handle sending messages
+  Future<void> _sendMessage(String message) async {
+    final newMessage = MessageModel(
+      senderId: 'currentUserId',
+      receiverId: 'receiverId',
+      message: message,
+      timestamp: DateTime.now(),
+      messageId: DateTime.now().millisecondsSinceEpoch.toString(),
+      status: 'sent',
+      type: 'text',
+    );
+
+    await _firebaseService.sendMessage(newMessage);
+  }
+
+  // Add this method to handle pinning/unpinning
+  Future<void> _togglePin(MessageModelWithSender chat) async {
+    await _firebaseService.togglePinChat(
+      chat.message.messageId,
+      !chat.message.isPinned,
+    );
+  }
 
 
-    MessageModelWithSender(
-      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
-      message: MessageModel(
-        senderId: 'Masihur Rohman',
-        receiverId: 'user_2',
-        message: "That's awesome! ..",
-        timestamp: DateTime.now(),
-        messageId: 'msg_001',
-        status: 'sent',
-        type: 'text',
-      ),
-
-    ),
-    MessageModelWithSender(
-      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
-      message: MessageModel(
-        senderId: 'Masihur Rohman',
-        receiverId: 'user_2',
-        message: "That's awesome! ..",
-        timestamp: DateTime.now(),
-        messageId: 'msg_001',
-        status: 'sent',
-        type: 'text',
-      ),
-
-    ),
-    MessageModelWithSender(
-      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
-      message: MessageModel(
-        senderId: 'Masihur Rohman',
-        receiverId: 'user_2',
-        message: "That's awesome! ..",
-        timestamp: DateTime.now(),
-        messageId: 'msg_001',
-        status: 'sent',
-        type: 'text',
-      ),
-
-    ),
-    MessageModelWithSender(
-      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
-      message: MessageModel(
-        senderId: 'Masihur Rohman',
-        receiverId: 'user_2',
-        message: "That's awesome! ..",
-        timestamp: DateTime.now(),
-        messageId: 'msg_001',
-        status: 'sent',
-        type: 'text',
-      ),
-
-    ),
-    MessageModelWithSender(
-      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
-      message: MessageModel(
-        senderId: 'Masihur Rohman',
-        receiverId: 'user_2',
-        message: "That's awesome! ..",
-        timestamp: DateTime.now(),
-        messageId: 'msg_001',
-        status: 'sent',
-        type: 'text',
-      ),
-
-    ),
-    MessageModelWithSender(
-      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
-      message: MessageModel(
-        senderId: 'Masihur Rohman',
-        receiverId: 'user_2',
-        message: "That's awesome! ..",
-        timestamp: DateTime.now(),
-        messageId: 'msg_001',
-        status: 'sent',
-        type: 'text',
-      ),
-
-    ),
-    MessageModelWithSender(
-      sender: UserModel(id: "01", name: "Masihur Rohman", avatarUrl: "assets/images/user.png",token: "token_01" ),
-      message: MessageModel(
-        senderId: 'Masihur Rohman',
-        receiverId: 'user_2',
-        message: "That's awesome! ..",
-        timestamp: DateTime.now(),
-        messageId: 'msg_001',
-        status: 'sent',
-        type: 'text',
-      ),
-
-    )
-
-
-
-   ];
+  @override
+  void dispose() {
+    _usersSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -180,9 +156,9 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-            const ChatTabBar(),
-            const Expanded(
-              child: ChatList(),
+             chatTabBar(context),
+             Expanded(
+              child: chatList(),
             ),
           ],
         ),
@@ -207,7 +183,7 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       ),
       padding: const EdgeInsets.all(8),
       child:Stack(
-        // ✅ Don’t expand — allow content to decide height
+        // ✅ Don't expand — allow content to decide height
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -251,42 +227,29 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
 
     );
   }
-}
 
-class ChatTabBar extends StatelessWidget {
-  const ChatTabBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
+  Widget chatTabBar (BuildContext context) {
+    return  Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            TabChip(label: "All chats", selected: true),
-            const SizedBox(width: 8),
-            TabChip(label: "Personal"),
-            const SizedBox(width: 8),
-            TabChip(label: "Work"),
-            const SizedBox(width: 8),
-            TabChip(label: "Groups"),
+            tabChip(label: "All chats", selected: true),
+            SizedBox(width: 8),
+            tabChip(label: "Personal"),
+            SizedBox(width: 8),
+            tabChip(label: "Work"),
+            SizedBox(width: 8),
+            tabChip(label: "Groups"),
           ],
         ),
       ),
     );
   }
-}
 
-class TabChip extends StatelessWidget {
-  final String label;
-  final bool selected;
-
-  const TabChip({super.key, required this.label, this.selected = false});
-
-  @override
-  Widget build(BuildContext context) {
+  Widget tabChip( {required String label,bool selected = false}) {
     return Chip(
       label: Text(label),
       backgroundColor: selected ? const Color(0xff7c3aed) : Colors.grey[200],
@@ -295,44 +258,24 @@ class TabChip extends StatelessWidget {
       ),
     );
   }
-}
 
-class ChatList extends StatelessWidget {
-  const ChatList({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      children: const [
-        ChatTile(
-          name: "Darlene Steward",
+  Widget chatList() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: allUsers.length,
+      itemBuilder: (context, index) {
+        final user = allUsers[index];
+        return ChatTile(
+          name: user.name,
           message: "Pls take a look at the images.",
           time: "18.31",
           unreadCount: 5,
-          imagePath: "assets/images/user.png",
-        ),
-        ChatTile(
-          name: "Fullsnack Designers",
-          message: "Hello guys, we have discussed about ...",
-          time: "16.04",
-          imagePath: "assets/images/user.png",
-        ),
-        ChatTile(
-          name: "Lee Williamson",
-          message: "Yes, that's gonna work, hopefully.",
-          time: "06.12",
-          imagePath: "assets/images/user.png",
-        ),
-        ChatTile(
-          name: "Ronald Mccoy",
-          message: "Thanks dude 😎",
-          time: "Yesterday",
-          imagePath: "assets/images/user.png",
-        ),
-      ],
+          imagePath: user.avatarUrl ,
+        );
+      },
     );
   }
+
 }
 
 class ChatTile extends StatelessWidget {
@@ -355,7 +298,7 @@ class ChatTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(vertical: 8),
-      leading: CircleAvatar(backgroundImage: AssetImage(imagePath)),
+      leading: CircleAvatar(backgroundImage: NetworkImage(imagePath)),
       title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
       subtitle: Text(message, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: Column(
