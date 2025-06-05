@@ -10,10 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0599e7cc-3e01-4eb7-bb36-8ad9e358d9bc" name="Changes" comment="Nice Messaging finished">
+      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/home_screen.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/home_screen.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/model/user_model.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/model/user_model.dart" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/messaging_home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/messaging_home_page.dart" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -105,14 +103,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1747725788259</updated>
-    </task>
-    <task id="LOCAL-00001" summary="Messaging option">
-      <option name="closed" value="true" />
-      <created>1747994930840</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1747994930840</updated>
     </task>
     <task id="LOCAL-00002" summary="Messaging option">
       <option name="closed" value="true" />
@@ -498,7 +488,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749114660208</updated>
     </task>
-    <option name="localTasksCounter" value="50" />
+    <task id="LOCAL-00050" summary="Nice Messaging finished">
+      <option name="closed" value="true" />
+      <created>1749118317555</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1749118317556</updated>
+    </task>
+    <option name="localTasksCounter" value="51" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

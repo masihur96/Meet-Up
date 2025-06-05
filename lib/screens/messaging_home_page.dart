@@ -8,6 +8,7 @@ import 'package:meet_check/screens/custom_size.dart';
 import 'package:meet_check/service/fcm_service.dart';
 
 import '../service/local_storage_service.dart';
+import 'chat_screen.dart';
 
 
 
@@ -28,30 +29,14 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
   StreamSubscription<DatabaseEvent>? _usersSubscription;
   List<UserModel> allUsers = [];
 
+  UserModel? _currentUser;
   List<UserModel> pinnedUsers = [];
 
   @override
   void initState() {
     super.initState();
-    _loadMessages();
+
     _listenToAllUsers();
-
-  }
-
-  getUser()async{
-   UserModel? userModel =  await LocalUserStorage.getUser();
-
-   if(userModel != null){
-
-     print("vgdfgdgdg${pinnedUsers.length}");
-
-     pinnedUsers =  getPinnedUsers(userModel.pinnedUserIds, allUsers);
-     print("vgdfgdgdg${pinnedUsers.length}");
-   }
-    setState(() {
-
-    });
-
 
   }
 
@@ -72,58 +57,29 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
         setState(() {
           allUsers = usersList;
         });
-
-
       getUserById(userModel.id, allUsers);
 
       }
     });
   }
-
    getUserById(String id, List<UserModel> allUsers) async{
-
-
+    if (allUsers.isEmpty) {
+      return;
+    }
     try {
        setState(() {
-         pinnedUsers =    getPinnedUsers(allUsers.firstWhere((user) => user.id == id).pinnedUserIds, allUsers);
+         _currentUser = allUsers.firstWhere((user) => user.id == id, orElse: () => UserModel(id: '', name: ''));
+         pinnedUsers =    getPinnedUsers(_currentUser!.pinnedUserIds, allUsers);
        });
-       print(pinnedUsers.length);
-
     } catch (e) {
       return null;
     }
   }
 
-
   List<UserModel> getPinnedUsers(List<String> pinnedUserIds, List<UserModel> allUsers) {
     return allUsers
         .where((user) => pinnedUserIds.contains(user.id))
         .toList();
-  }
-
-  void _loadMessages() {
-    // Listen to messages
-    _firebaseService.getMessages('currentUserId').listen((messages) {
-      setState(() {
-        pinnedChats = messages.where((m) => m.message.isPinned).toList();
-        recentChats = messages.where((m) => !m.message.isPinned).toList();
-      });
-    });
-  }
-
-  // Add this method to handle sending messages
-  Future<void> _sendMessage(String message) async {
-    final newMessage = MessageModel(
-      senderId: 'currentUserId',
-      receiverId: 'receiverId',
-      message: message,
-      timestamp: DateTime.now(),
-      messageId: DateTime.now().millisecondsSinceEpoch.toString(),
-      status: 'sent',
-      type: 'text',
-    );
-
-    await _firebaseService.sendMessage(newMessage);
   }
 
   // Add this method to handle pinning/unpinning
@@ -173,12 +129,12 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
+            pinnedUsers.isEmpty?SizedBox():   Text(
               "Pinned Chats",
               style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
-            SizedBox(
-              height: 200,
+            pinnedUsers.isEmpty?SizedBox(): SizedBox(
+              height: pinnedUsers.length<2?100: 200,
               child: GridView.builder(
                 shrinkWrap: false,
                 padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -217,77 +173,91 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xff7c3aed),
         onPressed: () {},
-        child: const Icon(Icons.message),
+        child: const Icon(Icons.message,color: Colors.white,),
       ),
     );
   }
 
   Widget pinnedChatTile(BuildContext context,  UserModel user, ) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        gradient: const LinearGradient(
-          colors: [Color(0xffede9fe), Color(0xfff3e8ff)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      padding: const EdgeInsets.all(8),
-      child:Stack(
-        // ✅ Don't expand — allow content to decide height
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min, // ✅ auto height
-            children: [
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: NetworkImage(user.avatarUrl),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      user.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12,
-                      ),
-
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 4),
-              Text(
-                user.lastMessage,
-                style: const TextStyle(fontSize: 11, color: Colors.black54),
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
-          ),
-          if (user.unseenMessageCount > 0)
-            Positioned(
-              right: 0,
-
-              top: -5,
-              child: Container(
-                margin: const EdgeInsets.only(top: 4),
-                padding: const EdgeInsets.all(6),
-                decoration: const BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: Color(0xff7c3aed),
-                ),
-                child: Text(
-                  user.unseenMessageCount.toString(),
-                  style: const TextStyle(fontSize: 10, color: Colors.white),
-                ),
-              ),
+    return GestureDetector(
+      onTap: () {
+        // Navigate to chat screen with user details
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ChatScreen(
+              receiver: user,
+              currentUser: _currentUser ?? UserModel(id: '', name: ''),
             ),
-        ],
-      )
+          ),
+        );
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(12),
+          gradient: const LinearGradient(
+            colors: [Color(0xffede9fe), Color(0xfff3e8ff)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        padding: const EdgeInsets.all(8),
+        child:Stack(
+          // ✅ Don't expand — allow content to decide height
+          children: [
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min, // ✅ auto height
+              children: [
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 20,
+                      backgroundImage: NetworkImage(user.avatarUrl),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        user.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                        ),
 
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  user.lastMessage,
+                  style: const TextStyle(fontSize: 11, color: Colors.black54),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+            if (user.unseenMessageCount > 0)
+              Positioned(
+                right: 0,
+
+                top: -5,
+                child: Container(
+                  margin: const EdgeInsets.only(top: 4),
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: Color(0xff7c3aed),
+                  ),
+                  child: Text(
+                    user.unseenMessageCount.toString(),
+                    style: const TextStyle(fontSize: 10, color: Colors.white),
+                  ),
+                ),
+              ),
+          ],
+        )
+
+      ),
     );
   }
 
@@ -328,6 +298,7 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       itemBuilder: (context, index) {
         final user = allUsers[index];
         return ChatTile(
+          currentUser: _currentUser ?? UserModel(id: '', name: ''),
           user: user,
         );
       },
@@ -338,15 +309,21 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
 class ChatTile extends StatelessWidget {
 
   final UserModel user;
+  final UserModel currentUser;
   const ChatTile({
     super.key,
     required this.user,
+    required this.currentUser,
 
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: (){
+        // Navigate to chat screen with user details
+        Navigator.push(context, MaterialPageRoute(builder: (_)=> ChatScreen(receiver: user,currentUser: currentUser,)));
+      },
 
       contentPadding: const EdgeInsets.symmetric(vertical: 8),
       leading: CircleAvatar(backgroundImage: NetworkImage(user.avatarUrl)),
