@@ -268,7 +268,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 itemCount: allUsers.length,
                 itemBuilder: (context, index) {
                   final user = allUsers[index];
-
                   return Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),

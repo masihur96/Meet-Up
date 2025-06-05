@@ -7,6 +7,8 @@ import 'package:meet_check/model/user_model.dart';
 import 'package:meet_check/screens/custom_size.dart';
 import 'package:meet_check/service/fcm_service.dart';
 
+import '../service/local_storage_service.dart';
+
 
 
 class MessagingHomePage extends StatefulWidget {
@@ -25,14 +27,39 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
   List<MessageModelWithSender> recentChats = [];
   StreamSubscription<DatabaseEvent>? _usersSubscription;
   List<UserModel> allUsers = [];
+
+  List<UserModel> pinnedUsers = [];
+
   @override
   void initState() {
     super.initState();
     _loadMessages();
     _listenToAllUsers();
+
   }
 
-  void _listenToAllUsers() {
+  getUser()async{
+   UserModel? userModel =  await LocalUserStorage.getUser();
+
+   if(userModel != null){
+
+     print("vgdfgdgdg${pinnedUsers.length}");
+
+     pinnedUsers =  getPinnedUsers(userModel.pinnedUserIds, allUsers);
+     print("vgdfgdgdg${pinnedUsers.length}");
+   }
+    setState(() {
+
+    });
+
+
+  }
+
+  void _listenToAllUsers() async{
+    UserModel? userModel = await LocalUserStorage.getUser();
+    if(userModel == null){
+      return;
+  }
     _usersSubscription = _database.child('users').onValue.listen((event) {
       final data = event.snapshot.value;
       if (data != null) {
@@ -45,8 +72,33 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
         setState(() {
           allUsers = usersList;
         });
+
+
+      getUserById(userModel.id, allUsers);
+
       }
     });
+  }
+
+   getUserById(String id, List<UserModel> allUsers) async{
+
+
+    try {
+       setState(() {
+         pinnedUsers =    getPinnedUsers(allUsers.firstWhere((user) => user.id == id).pinnedUserIds, allUsers);
+       });
+       print(pinnedUsers.length);
+
+    } catch (e) {
+      return null;
+    }
+  }
+
+
+  List<UserModel> getPinnedUsers(List<String> pinnedUserIds, List<UserModel> allUsers) {
+    return allUsers
+        .where((user) => pinnedUserIds.contains(user.id))
+        .toList();
   }
 
   void _loadMessages() {
@@ -137,13 +189,12 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
                   childAspectRatio: 1.7, // ✅ width / height ratio (try 2.5 for rectangle)
                 ),
 
-                itemCount: pinnedChats.length, // your data list
+                itemCount: pinnedUsers.length, // your data list
                 itemBuilder: (context, index) {
-                  final chat = pinnedChats[index];
+                  final chat = pinnedUsers[index];
                   return pinnedChatTile(
                     context,
-                    chat,
-                    unread: chat.message.status == 'sent', // Example condition for unread
+                    chat, // Example condition for unread
                   );
                 },
               ),
@@ -171,7 +222,7 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
     );
   }
 
-  Widget pinnedChatTile(BuildContext context,  MessageModelWithSender chat, {bool unread = false}) {
+  Widget pinnedChatTile(BuildContext context,  UserModel user, ) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12),
@@ -193,12 +244,12 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
                 children: [
                   CircleAvatar(
                     radius: 20,
-                    backgroundImage: AssetImage(chat.sender.avatarUrl ?? "assets/images/user.png"),
+                    backgroundImage: NetworkImage(user.avatarUrl),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      chat.sender.name,
+                      user.name,
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
@@ -210,17 +261,29 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
               ),
               const SizedBox(height: 4),
               Text(
-                chat.message.message,
+                user.lastMessage,
                 style: const TextStyle(fontSize: 11, color: Colors.black54),
                 overflow: TextOverflow.ellipsis,
               ),
             ],
           ),
-          if (unread)
-            const Positioned(
+          if (user.unseenMessageCount > 0)
+            Positioned(
               right: 0,
-              top: 0,
-              child: Icon(Icons.circle, size: 14, color: Color(0xff7c3aed)),
+
+              top: -5,
+              child: Container(
+                margin: const EdgeInsets.only(top: 4),
+                padding: const EdgeInsets.all(6),
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Color(0xff7c3aed),
+                ),
+                child: Text(
+                  user.unseenMessageCount.toString(),
+                  style: const TextStyle(fontSize: 10, color: Colors.white),
+                ),
+              ),
             ),
         ],
       )
@@ -258,7 +321,6 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       ),
     );
   }
-
   Widget chatList() {
     return ListView.builder(
       padding: const EdgeInsets.all(12),
@@ -266,46 +328,35 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       itemBuilder: (context, index) {
         final user = allUsers[index];
         return ChatTile(
-          name: user.name,
-          message: "Pls take a look at the images.",
-          time: "18.31",
-          unreadCount: 5,
-          imagePath: user.avatarUrl ,
+          user: user,
         );
       },
     );
   }
-
 }
 
 class ChatTile extends StatelessWidget {
-  final String name;
-  final String message;
-  final String time;
-  final int unreadCount;
-  final String imagePath;
 
+  final UserModel user;
   const ChatTile({
     super.key,
-    required this.name,
-    required this.message,
-    required this.time,
-    this.unreadCount = 0,
-    required this.imagePath,
+    required this.user,
+
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+
       contentPadding: const EdgeInsets.symmetric(vertical: 8),
-      leading: CircleAvatar(backgroundImage: NetworkImage(imagePath)),
-      title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(message, maxLines: 1, overflow: TextOverflow.ellipsis),
+      leading: CircleAvatar(backgroundImage: NetworkImage(user.avatarUrl)),
+      title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text(user.lastMessage, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text(time, style: const TextStyle(fontSize: 12)),
-          if (unreadCount > 0)
+          Text(user.lastMessageTime, style: const TextStyle(fontSize: 12)),
+          if (user.unseenMessageCount > 0)
             Container(
               margin: const EdgeInsets.only(top: 4),
               padding: const EdgeInsets.all(6),
@@ -314,7 +365,7 @@ class ChatTile extends StatelessWidget {
                 color: Color(0xff7c3aed),
               ),
               child: Text(
-                unreadCount.toString(),
+                user.unseenMessageCount.toString(),
                 style: const TextStyle(fontSize: 10, color: Colors.white),
               ),
             ),

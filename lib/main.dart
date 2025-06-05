@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
       return const RegisterScreen();
     } else {
       return const MessagingHomePage();
-      // return const HomeScreen();
+      return const HomeScreen();
     }
   }
 
