@@ -104,11 +104,26 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text("Messages", style: TextStyle(color: Colors.black)),
-        actions: const [
-          Icon(Icons.search, color: Colors.black),
-          SizedBox(width: 16),
-          Icon(Icons.settings, color: Colors.black),
-          SizedBox(width: 16),
+        actions:  [
+          IconButton(onPressed: (){}, icon:           Icon(Icons.search, color: Colors.black),),
+          PopupMenuButton<String>(
+            icon: Icon(Icons.settings, color: Colors.black),
+            onSelected: (value) {
+              // Handle menu selection
+              if (value == 'option1') {
+                // Do something for Option 1
+              } else if (value == 'option2') {
+                // Do something for Option 2
+              }
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              PopupMenuItem<String>(
+                value: 'New Group',
+                child: Text('New Group'),
+              ),
+            ],
+          ),
+
         ],
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(24),
