@@ -9,12 +9,9 @@ import 'package:meet_check/service/fcm_service.dart';
 
 import '../service/local_storage_service.dart';
 import 'chat_screen.dart';
-
-
+import 'new_group_screen.dart';
 
 class MessagingHomePage extends StatefulWidget {
-
-
   const MessagingHomePage({super.key});
 
   @override
@@ -37,14 +34,13 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
     super.initState();
 
     _listenToAllUsers();
-
   }
 
-  void _listenToAllUsers() async{
+  void _listenToAllUsers() async {
     UserModel? userModel = await LocalUserStorage.getUser();
-    if(userModel == null){
+    if (userModel == null) {
       return;
-  }
+    }
     _usersSubscription = _database.child('users').onValue.listen((event) {
       final data = event.snapshot.value;
       if (data != null) {
@@ -57,29 +53,29 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
         setState(() {
           allUsers = usersList;
         });
-      getUserById(userModel.id, allUsers);
-
+        getUserById(userModel.id, allUsers);
       }
     });
   }
-   getUserById(String id, List<UserModel> allUsers) async{
+
+  getUserById(String id, List<UserModel> allUsers) async {
     if (allUsers.isEmpty) {
       return;
     }
     try {
-       setState(() {
-         _currentUser = allUsers.firstWhere((user) => user.id == id, orElse: () => UserModel(id: '', name: ''));
-         pinnedUsers =    getPinnedUsers(_currentUser!.pinnedUserIds, allUsers);
-       });
+      setState(() {
+        _currentUser = allUsers.firstWhere((user) => user.id == id,
+            orElse: () => UserModel(id: '', name: ''));
+        pinnedUsers = getPinnedUsers(_currentUser!.pinnedUserIds, allUsers);
+      });
     } catch (e) {
       return null;
     }
   }
 
-  List<UserModel> getPinnedUsers(List<String> pinnedUserIds, List<UserModel> allUsers) {
-    return allUsers
-        .where((user) => pinnedUserIds.contains(user.id))
-        .toList();
+  List<UserModel> getPinnedUsers(
+      List<String> pinnedUserIds, List<UserModel> allUsers) {
+    return allUsers.where((user) => pinnedUserIds.contains(user.id)).toList();
   }
 
   // Add this method to handle pinning/unpinning
@@ -89,7 +85,6 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       !chat.message.isPinned,
     );
   }
-
 
   @override
   void dispose() {
@@ -104,16 +99,20 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: const Text("Messages", style: TextStyle(color: Colors.black)),
-        actions:  [
-          IconButton(onPressed: (){}, icon:           Icon(Icons.search, color: Colors.black),),
+        actions: [
+          IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.search, color: Colors.black),
+          ),
           PopupMenuButton<String>(
             icon: Icon(Icons.settings, color: Colors.black),
             onSelected: (value) {
               // Handle menu selection
               if (value == 'new_group') {
-                // Do something for Option 1
-              } else if (value == 'new_group') {
-                // Do something for Option 2
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const NewGroupScreen()),
+                );
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -123,7 +122,6 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
               ),
             ],
           ),
-
         ],
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(24),
@@ -144,33 +142,39 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            pinnedUsers.isEmpty?SizedBox():   Text(
-              "Pinned Chats",
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            pinnedUsers.isEmpty?SizedBox(): SizedBox(
-              height: pinnedUsers.length<2?100: 200,
-              child: GridView.builder(
-                shrinkWrap: false,
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 12,
-                  childAspectRatio: 1.7, // ✅ width / height ratio (try 2.5 for rectangle)
-                ),
+            pinnedUsers.isEmpty
+                ? SizedBox()
+                : Text(
+                    "Pinned Chats",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+            pinnedUsers.isEmpty
+                ? SizedBox()
+                : SizedBox(
+                    height: pinnedUsers.length < 2 ? 100 : 200,
+                    child: GridView.builder(
+                      shrinkWrap: false,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 8,
+                        mainAxisSpacing: 12,
+                        childAspectRatio:
+                            1.7, // ✅ width / height ratio (try 2.5 for rectangle)
+                      ),
 
-                itemCount: pinnedUsers.length, // your data list
-                itemBuilder: (context, index) {
-                  final chat = pinnedUsers[index];
-                  return pinnedChatTile(
-                    context,
-                    chat, // Example condition for unread
-                  );
-                },
-              ),
-
-            ),
+                      itemCount: pinnedUsers.length,
+                      // your data list
+                      itemBuilder: (context, index) {
+                        final chat = pinnedUsers[index];
+                        return pinnedChatTile(
+                          context,
+                          chat, // Example condition for unread
+                        );
+                      },
+                    ),
+                  ),
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: Text(
@@ -178,8 +182,8 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
-             chatTabBar(context),
-             Expanded(
+            chatTabBar(context),
+            Expanded(
               child: chatList(),
             ),
           ],
@@ -188,12 +192,18 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: const Color(0xff7c3aed),
         onPressed: () {},
-        child: const Icon(Icons.message,color: Colors.white,),
+        child: const Icon(
+          Icons.message,
+          color: Colors.white,
+        ),
       ),
     );
   }
 
-  Widget pinnedChatTile(BuildContext context,  UserModel user, ) {
+  Widget pinnedChatTile(
+    BuildContext context,
+    UserModel user,
+  ) {
     return GestureDetector(
       onTap: () {
         // Navigate to chat screen with user details
@@ -208,76 +218,72 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
         );
       },
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          gradient: const LinearGradient(
-            colors: [Color(0xffede9fe), Color(0xfff3e8ff)],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        padding: const EdgeInsets.all(8),
-        child:Stack(
-          // ✅ Don't expand — allow content to decide height
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min, // ✅ auto height
-              children: [
-                Row(
-                  children: [
-                    CircleAvatar(
-                      radius: 20,
-                      backgroundImage: NetworkImage(user.avatarUrl),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        user.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  user.lastMessage,
-                  style: const TextStyle(fontSize: 11, color: Colors.black54),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12),
+            gradient: const LinearGradient(
+              colors: [Color(0xffede9fe), Color(0xfff3e8ff)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
-            if (user.unseenMessageCount > 0)
-              Positioned(
-                right: 0,
-
-                top: -5,
-                child: Container(
-                  margin: const EdgeInsets.only(top: 4),
-                  padding: const EdgeInsets.all(6),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Color(0xff7c3aed),
+          ),
+          padding: const EdgeInsets.all(8),
+          child: Stack(
+            // ✅ Don't expand — allow content to decide height
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min, // ✅ auto height
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 20,
+                        backgroundImage: NetworkImage(user.avatarUrl),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          user.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  child: Text(
-                    user.unseenMessageCount.toString(),
-                    style: const TextStyle(fontSize: 10, color: Colors.white),
+                  const SizedBox(height: 4),
+                  Text(
+                    user.lastMessage,
+                    style: const TextStyle(fontSize: 11, color: Colors.black54),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
+              if (user.unseenMessageCount > 0)
+                Positioned(
+                  right: 0,
+                  top: -5,
+                  child: Container(
+                    margin: const EdgeInsets.only(top: 4),
+                    padding: const EdgeInsets.all(6),
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xff7c3aed),
+                    ),
+                    child: Text(
+                      user.unseenMessageCount.toString(),
+                      style: const TextStyle(fontSize: 10, color: Colors.white),
+                    ),
                   ),
                 ),
-              ),
-          ],
-        )
-
-      ),
+            ],
+          )),
     );
   }
 
-  Widget chatTabBar (BuildContext context) {
-    return  Padding(
+  Widget chatTabBar(BuildContext context) {
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -297,7 +303,7 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
     );
   }
 
-  Widget tabChip( {required String label,bool selected = false}) {
+  Widget tabChip({required String label, bool selected = false}) {
     return Chip(
       label: Text(label),
       backgroundColor: selected ? const Color(0xff7c3aed) : Colors.grey[200],
@@ -306,6 +312,7 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       ),
     );
   }
+
   Widget chatList() {
     return ListView.builder(
       padding: const EdgeInsets.all(12),
@@ -322,28 +329,34 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
 }
 
 class ChatTile extends StatelessWidget {
-
   final UserModel user;
   final UserModel currentUser;
+
   const ChatTile({
     super.key,
     required this.user,
     required this.currentUser,
-
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: (){
+      onTap: () {
         // Navigate to chat screen with user details
-        Navigator.push(context, MaterialPageRoute(builder: (_)=> ChatScreen(receiver: user,currentUser: currentUser,)));
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (_) => ChatScreen(
+                      receiver: user,
+                      currentUser: currentUser,
+                    )));
       },
-
       contentPadding: const EdgeInsets.symmetric(vertical: 8),
       leading: CircleAvatar(backgroundImage: NetworkImage(user.avatarUrl)),
-      title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text(user.lastMessage, maxLines: 1, overflow: TextOverflow.ellipsis),
+      title:
+          Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle:
+          Text(user.lastMessage, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

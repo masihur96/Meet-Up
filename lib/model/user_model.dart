@@ -10,6 +10,7 @@ class UserModel {
   final String lastMessage; // New
   final List<String> pinnedUserIds; // New
   final int unseenMessageCount; // New
+  final List<String> groups;
 
   UserModel({
     required this.id,
@@ -21,6 +22,7 @@ class UserModel {
     this.lastMessage = 'Pls take a look at the images.',
     this.pinnedUserIds=const [], // New
     this.unseenMessageCount = 0,
+    this.groups = const [],
   });
 
   Map<String, dynamic> toMap() {
@@ -34,10 +36,11 @@ class UserModel {
       'lastMessage': lastMessage,
       'pinnedUserIds': pinnedUserIds,
       'unseenMessageCount': unseenMessageCount,
+      'groups': groups,
     };
   }
 
-  factory UserModel.fromMap(Map<dynamic, dynamic> map) {
+  factory UserModel.fromMap(Map<String, dynamic> map) {
     return UserModel(
       id: map['id'] ?? '',
       name: map['name'] ?? '',
@@ -50,6 +53,7 @@ class UserModel {
           ? List<String>.from(map['pinnedUserIds'])
           : const [],
       unseenMessageCount: map['unseenMessageCount'] ?? 0,
+      groups: List<String>.from(map['groups']?.keys ?? []),
     );
   }
 
