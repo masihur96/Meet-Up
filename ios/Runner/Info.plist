@@ -57,5 +57,6 @@
     <string>Need microphone access for making calls</string>
     <key>NSCameraUsageDescription</key>
     <string>Need camera access for video calls</string>
+
 </dict>
 </plist>

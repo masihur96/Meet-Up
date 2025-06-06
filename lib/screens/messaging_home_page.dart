@@ -446,15 +446,15 @@ class GroupTile extends StatelessWidget {
       contentPadding: EdgeInsets.zero,
       onTap: () {
         // Navigate to group chat screen
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => GroupChatScreen(
-              group: groupModel,
-              currentUser: currentUser
-            ),
-          ),
-        );
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (_) => GroupChatScreen(
+        //       group: groupModel,
+        //       currentUser: currentUser
+        //     ),
+        //   ),
+        // );
       },
       leading: CircleAvatar(
         child: Text(

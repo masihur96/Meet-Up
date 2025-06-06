@@ -8,6 +8,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   emoji_picker_flutter
   firebase_core
   firebase_storage
+  record_windows
   url_launcher_windows
 )
 

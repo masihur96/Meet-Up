@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:core';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -9,10 +10,12 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:meet_check/screens/full_screen_video_player.dart';
 import 'package:meet_check/screens/video_preview.dart';
 import 'package:mime/mime.dart';
+import 'package:record/record.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'audio_message_preview.dart';
 import 'document_preview.dart';
+
 
 class ChatScreen extends StatefulWidget {
   final UserModel receiver;
@@ -38,6 +41,9 @@ class _ChatScreenState extends State<ChatScreen> {
   bool isReceiverOnline = false;
   bool _showEmojiPicker = false;
 
+  final _audioRecorder = AudioRecorder(); // Correct
+  bool _isRecording = false;
+  String? _recordingPath;
   @override
   void initState() {
     super.initState();
@@ -381,6 +387,14 @@ class _ChatScreenState extends State<ChatScreen> {
                     });
                   },
                 ),
+                GestureDetector(
+                  onLongPress: _startRecording,
+                  onLongPressEnd: (_) => _stopRecording(),
+                  child: IconButton(
+                    icon: Icon(_isRecording ? Icons.mic : Icons.mic_none),
+                    onPressed: null,
+                  ),
+                ),
                 Expanded(
                   child: TextField(
                     controller: _messageController,
@@ -395,6 +409,25 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  Future<void> _stopRecording() async {
+    _recordingPath = await _audioRecorder.stop();
+    setState(() => _isRecording = false);
+    // if (_recordingPath != null) _sendAudioMessage(_recordingPath!);
+  }
+
+  Future<void> _startRecording() async {
+
+      if (await _audioRecorder.hasPermission()) {
+        // Start recording to file
+        await _audioRecorder.start(const RecordConfig(), path: 'aFullPath/myFile.m4a');
+        // ... or to stream
+        final stream = await _audioRecorder.startStream(const RecordConfig(encoder: AudioEncoder.pcm16bits));
+      }
+
+      setState(() => _isRecording = true);
+
   }
 
   @override
