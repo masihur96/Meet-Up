@@ -366,36 +366,26 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
   }
 
   Widget allChatList() {
-    return Column(
+    return ListView(
+      padding: const EdgeInsets.all(12),
       children: [
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: groupList.length,
-            itemBuilder: (context, index) {
-              final group = groupList[index];
-              return GroupTile(
-               groupModel: group,
-              );
-            },
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            padding: const EdgeInsets.all(12),
-            itemCount: allUsers.length,
-            itemBuilder: (context, index) {
-              final user = allUsers[index];
-              return ChatTile(
-                currentUser: _currentUser ?? UserModel(id: '', name: ''),
-                user: user,
-              );
-            },
-          ),
-        ),
+        // Groups Section
+        if (groupList.isNotEmpty) ...[
+          ...groupList.map((group) => GroupTile(groupModel: group)).toList(),
+        ],
+
+        // Chats Section
+        if (allUsers.isNotEmpty) ...[
+
+          ...allUsers.map((user) => ChatTile(
+            currentUser: _currentUser ?? UserModel(id: '', name: ''),
+            user: user,
+          )).toList(),
+        ],
       ],
     );
   }
+
 
   Widget personalChatList() {
     return ListView.builder(
@@ -412,29 +402,28 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
   }
 
   Widget workChatList() {
+    final workGroups = groupList.where((group) =>
+        group.purpose.toLowerCase().contains('work')
+    ).toList();
     return ListView.builder(
       padding: const EdgeInsets.all(12),
-      itemCount: allUsers.length,
+      itemCount: workGroups.length,
       itemBuilder: (context, index) {
-        final user = allUsers[index];
-        return ChatTile(
-          currentUser: _currentUser ?? UserModel(id: '', name: ''),
-          user: user,
-        );
+        final group = workGroups[index];
+        return GroupTile(groupModel: group);
       },
     );
   }
 
+
+
   Widget groupChatList() {
     return ListView.builder(
       padding: const EdgeInsets.all(12),
-      itemCount: allUsers.length,
+      itemCount: groupList.length,
       itemBuilder: (context, index) {
-        final user = allUsers[index];
-        return ChatTile(
-          currentUser: _currentUser ?? UserModel(id: '', name: ''),
-          user: user,
-        );
+        final group = groupList[index];
+        return GroupTile(groupModel: group);
       },
     );
   }
@@ -451,6 +440,7 @@ class GroupTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      contentPadding:  EdgeInsets.zero,
       onTap: () {
         // Navigate to chat screen with group details
         // Navigator.push(
@@ -460,7 +450,6 @@ class GroupTile extends StatelessWidget {
         //   ),
         // );
       },
-      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       leading: CircleAvatar(
         child: Text(
           groupModel.members.length.toString(),
@@ -476,6 +465,9 @@ class GroupTile extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
       ),
+
+      trailing:
+      Text(groupModel.lastMessageTime.toString(), style: const TextStyle(fontSize: 12)),
     );
   }
 }
