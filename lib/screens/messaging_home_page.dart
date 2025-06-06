@@ -2,9 +2,9 @@ import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:meet_check/model/group_model.dart';
 import 'package:meet_check/model/message_model.dart';
 import 'package:meet_check/model/user_model.dart';
-import 'package:meet_check/screens/custom_size.dart';
 import 'package:meet_check/service/fcm_service.dart';
 
 import '../service/local_storage_service.dart';
@@ -29,11 +29,37 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
   UserModel? _currentUser;
   List<UserModel> pinnedUsers = [];
 
+  StreamSubscription<DatabaseEvent>? _groupSubscription;
+  List<GroupModel> groupList = [];
+
+  String selectedTab = 'All chats'; // Default selected tab
+
   @override
   void initState() {
     super.initState();
 
     _listenToAllUsers();
+    _listenToGroups();
+  }
+
+  void _listenToGroups() {
+    _groupSubscription = _database.child('groups').onValue.listen((event) {
+      final data = event.snapshot.value;
+      if (data != null) {
+        final groupMap = Map<String, dynamic>.from(data as Map);
+        final groups = groupMap.entries.map((entry) {
+          final groupId = entry.key;
+          final groupData = Map<String, dynamic>.from(entry.value);
+          return GroupModel.fromMap(groupData, groupId);
+        }).toList();
+
+        setState(() {
+          groupList = groups;
+        });
+
+        print("groupList:$groupList");
+      }
+    });
   }
 
   void _listenToAllUsers() async {
@@ -89,6 +115,7 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
   @override
   void dispose() {
     _usersSubscription?.cancel();
+    _groupSubscription?.cancel();
     super.dispose();
   }
 
@@ -184,8 +211,13 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
             ),
             chatTabBar(context),
             Expanded(
-              child: chatList(),
-            ),
+                child: selectedTab == "All chats"
+                    ? allChatList()
+                    : selectedTab == "Personal"
+                        ? personalChatList()
+                        : selectedTab == "Work"
+                            ? workChatList()
+                            : groupChatList()),
           ],
         ),
       ),
@@ -283,37 +315,117 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
   }
 
   Widget chatTabBar(BuildContext context) {
+    final tabs = ["All chats", "Personal", "Work", "Groups"];
+
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            tabChip(label: "All chats", selected: true),
-            SizedBox(width: 8),
-            tabChip(label: "Personal"),
-            SizedBox(width: 8),
-            tabChip(label: "Work"),
-            SizedBox(width: 8),
-            tabChip(label: "Groups"),
-          ],
+          children: tabs.map((label) {
+            return Padding(
+              padding: const EdgeInsets.only(right: 8),
+              child: tabChip(
+                label: label,
+                selected: selectedTab == label,
+                onTap: () {
+                  setState(() {
+                    selectedTab = label;
+                  });
+                },
+              ),
+            );
+          }).toList(),
         ),
       ),
     );
   }
 
-  Widget tabChip({required String label, bool selected = false}) {
-    return Chip(
-      label: Text(label),
-      backgroundColor: selected ? const Color(0xff7c3aed) : Colors.grey[200],
-      labelStyle: TextStyle(
-        color: selected ? Colors.white : Colors.black,
+  Widget tabChip({
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: selected ? Colors.blue : Colors.grey[300],
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: selected ? Colors.white : Colors.black,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
       ),
     );
   }
 
-  Widget chatList() {
+  Widget allChatList() {
+    return Column(
+      children: [
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: groupList.length,
+            itemBuilder: (context, index) {
+              final group = groupList[index];
+              return GroupTile(
+               groupModel: group,
+              );
+            },
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: allUsers.length,
+            itemBuilder: (context, index) {
+              final user = allUsers[index];
+              return ChatTile(
+                currentUser: _currentUser ?? UserModel(id: '', name: ''),
+                user: user,
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget personalChatList() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: allUsers.length,
+      itemBuilder: (context, index) {
+        final user = allUsers[index];
+        return ChatTile(
+          currentUser: _currentUser ?? UserModel(id: '', name: ''),
+          user: user,
+        );
+      },
+    );
+  }
+
+  Widget workChatList() {
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: allUsers.length,
+      itemBuilder: (context, index) {
+        final user = allUsers[index];
+        return ChatTile(
+          currentUser: _currentUser ?? UserModel(id: '', name: ''),
+          user: user,
+        );
+      },
+    );
+  }
+
+  Widget groupChatList() {
     return ListView.builder(
       padding: const EdgeInsets.all(12),
       itemCount: allUsers.length,
@@ -327,6 +439,48 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
     );
   }
 }
+
+class GroupTile extends StatelessWidget {
+  final GroupModel groupModel;
+
+  const GroupTile({
+    super.key,
+    required this.groupModel,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () {
+        // Navigate to chat screen with group details
+        // Navigator.push(
+        //   context,
+        //   MaterialPageRoute(
+        //     builder: (_) => ChatScreen(group: groupModel),
+        //   ),
+        // );
+      },
+      contentPadding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      leading: CircleAvatar(
+        child: Text(
+          groupModel.members.length.toString(),
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+      ),
+      title: Text(
+        groupModel.name,
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ),
+      subtitle: Text(
+        groupModel.purpose,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+}
+
+
 
 class ChatTile extends StatelessWidget {
   final UserModel user;
