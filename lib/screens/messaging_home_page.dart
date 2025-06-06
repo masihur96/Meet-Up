@@ -213,12 +213,12 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
             chatTabBar(context),
             Expanded(
                 child: selectedTab == "All chats"
-                    ? allChatList(_currentUser!)
+                    ? allChatList(_currentUser?? UserModel(id: '', name: ''))
                     : selectedTab == "Personal"
                         ? personalChatList()
                         : selectedTab == "Work"
-                            ? workChatList(_currentUser!)
-                            : groupChatList(_currentUser!)),
+                            ? workChatList(_currentUser?? UserModel(id: '', name: ''))
+                            : groupChatList(_currentUser?? UserModel(id: '', name: ''))),
           ],
         ),
       ),

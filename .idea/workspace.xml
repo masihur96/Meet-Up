@@ -10,7 +10,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="0599e7cc-3e01-4eb7-bb36-8ad9e358d9bc" name="Changes" comment="Group Create">
-      <change beforePath="$PROJECT_DIR$/.flutter-plugins-dependencies" beforeDir="false" afterPath="$PROJECT_DIR$/.flutter-plugins-dependencies" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/lib/screens/messaging_home_page.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/screens/messaging_home_page.dart" afterDir="false" />
     </list>
@@ -103,14 +102,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1747725788259</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Subscribe">
-      <option name="closed" value="true" />
-      <created>1748249988511</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1748249988512</updated>
     </task>
     <task id="LOCAL-00009" summary="Subscribe FCM">
       <option name="closed" value="true" />
@@ -496,7 +487,15 @@
       <option name="project" value="LOCAL" />
       <updated>1749205435821</updated>
     </task>
-    <option name="localTasksCounter" value="57" />
+    <task id="LOCAL-00057" summary="Group Create">
+      <option name="closed" value="true" />
+      <created>1749207008116</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1749207008116</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
