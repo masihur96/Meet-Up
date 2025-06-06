@@ -110,15 +110,15 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
             icon: Icon(Icons.settings, color: Colors.black),
             onSelected: (value) {
               // Handle menu selection
-              if (value == 'option1') {
+              if (value == 'new_group') {
                 // Do something for Option 1
-              } else if (value == 'option2') {
+              } else if (value == 'new_group') {
                 // Do something for Option 2
               }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               PopupMenuItem<String>(
-                value: 'New Group',
+                value: 'new_group',
                 child: Text('New Group'),
               ),
             ],
