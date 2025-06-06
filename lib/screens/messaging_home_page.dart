@@ -10,6 +10,7 @@ import 'package:meet_check/service/fcm_service.dart';
 import '../service/local_storage_service.dart';
 import 'chat_screen.dart';
 import 'new_group_screen.dart';
+import 'group_chat_screen.dart';
 
 class MessagingHomePage extends StatefulWidget {
   const MessagingHomePage({super.key});
@@ -212,12 +213,12 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
             chatTabBar(context),
             Expanded(
                 child: selectedTab == "All chats"
-                    ? allChatList()
+                    ? allChatList(_currentUser!)
                     : selectedTab == "Personal"
                         ? personalChatList()
                         : selectedTab == "Work"
-                            ? workChatList()
-                            : groupChatList()),
+                            ? workChatList(_currentUser!)
+                            : groupChatList(_currentUser!)),
           ],
         ),
       ),
@@ -365,13 +366,13 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
     );
   }
 
-  Widget allChatList() {
+  Widget allChatList(UserModel currentUser) {
     return ListView(
       padding: const EdgeInsets.all(12),
       children: [
         // Groups Section
         if (groupList.isNotEmpty) ...[
-          ...groupList.map((group) => GroupTile(groupModel: group)).toList(),
+          ...groupList.map((group) => GroupTile(groupModel: group,currentUser: currentUser,)).toList(),
         ],
 
         // Chats Section
@@ -401,7 +402,7 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
     );
   }
 
-  Widget workChatList() {
+  Widget workChatList(UserModel currentUser) {
     final workGroups = groupList.where((group) =>
         group.purpose.toLowerCase().contains('work')
     ).toList();
@@ -410,20 +411,20 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
       itemCount: workGroups.length,
       itemBuilder: (context, index) {
         final group = workGroups[index];
-        return GroupTile(groupModel: group);
+        return GroupTile(groupModel: group,currentUser: currentUser,);
       },
     );
   }
 
 
 
-  Widget groupChatList() {
+  Widget groupChatList(UserModel currentUser) {
     return ListView.builder(
       padding: const EdgeInsets.all(12),
       itemCount: groupList.length,
       itemBuilder: (context, index) {
         final group = groupList[index];
-        return GroupTile(groupModel: group);
+        return GroupTile(groupModel: group,currentUser: currentUser,);
       },
     );
   }
@@ -431,24 +432,29 @@ class _MessagingHomePageState extends State<MessagingHomePage> {
 
 class GroupTile extends StatelessWidget {
   final GroupModel groupModel;
+  final UserModel currentUser;
 
   const GroupTile({
     super.key,
     required this.groupModel,
+    required this.currentUser,
   });
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      contentPadding:  EdgeInsets.zero,
+      contentPadding: EdgeInsets.zero,
       onTap: () {
-        // Navigate to chat screen with group details
-        // Navigator.push(
-        //   context,
-        //   MaterialPageRoute(
-        //     builder: (_) => ChatScreen(group: groupModel),
-        //   ),
-        // );
+        // Navigate to group chat screen
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => GroupChatScreen(
+              group: groupModel,
+              currentUser: currentUser
+            ),
+          ),
+        );
       },
       leading: CircleAvatar(
         child: Text(
