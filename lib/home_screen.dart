@@ -58,12 +58,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void _listenToAllUsers() {
     _usersSubscription = _database.child('users').onValue.listen((event) {
       final data = event.snapshot.value;
-      if (data != null) {
+      if (data != null && data is Map) {
         final usersMap = Map<String, dynamic>.from(data as Map);
         final usersList = usersMap.entries.map((entry) {
-          final userMap = Map<String, dynamic>.from(entry.value);
-          return UserModel.fromMap(userMap);
-        }).toList();
+          if (entry.value is Map) {
+            final userMap = Map<String, dynamic>.from(entry.value);
+            return UserModel.fromMap(userMap);
+          } else {
+            print("Skipping invalid user entry: ${entry.value}");
+            return null; // or handle differently
+          }
+        }).whereType<UserModel>().toList();
 
         setState(() {
           allUsers = usersList;
@@ -71,6 +76,7 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
+
 
   Future<void> _makeCall(UserModel user) async {
     setState(() {
@@ -126,13 +132,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
             _callService.stopCallingBeep();
             Navigator.pop(context);
+            Navigator.push(context, MaterialPageRoute(builder: (_)=> CallingScreen(
+              callerName: userModel!.name,
+              meetingId: user.id,
+              isVideo: _isVideoEnabled,
+            )));
+
 
           }
-          Navigator.push(context, MaterialPageRoute(builder: (_)=> CallingScreen(
-            callerName: userModel!.name,
-            meetingId: user.id,
-            isVideo: _isVideoEnabled,
-          )));
 
 
           // _joinMeeting(_currentCallId!, userModel!);

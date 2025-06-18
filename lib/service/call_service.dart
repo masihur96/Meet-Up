@@ -89,7 +89,7 @@ class CallService {
         case Event.actionCallDecline:
 
            updateUserStatus(
-            userId: meetingId,
+            userId: meetingId??"",
             newStatus: 'declined',
           );
           print("❌ Call declined");
@@ -97,7 +97,7 @@ class CallService {
 
         case Event.actionCallEnded:
           updateUserStatus(
-            userId: meetingId,
+            userId: meetingId??"",
             newStatus: 'callended',
           );
 
@@ -127,17 +127,22 @@ class CallService {
       newStatus: 'accepted',
     );
 
-
-
-    navigatorKey.currentState?.pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (_) => CallingScreen(
-          callerName: callerName ?? "Unknown Caller",
-          meetingId: meetingId,
-        ),
-      ),
-          (route) => false, // Remove all previous routes
-    );
+    // Add a short delay to ensure navigator stack is available
+    Future.delayed(const Duration(milliseconds: 300), () {
+      if (navigatorKey.currentState?.mounted == true) {
+        navigatorKey.currentState?.pushAndRemoveUntil(
+          MaterialPageRoute(
+            builder: (_) => CallingScreen(
+              callerName: callerName ?? "Unknown Caller",
+              meetingId: meetingId,
+            ),
+          ),
+              (route) => false,
+        );
+      } else {
+        print("❌ navigatorKey.currentState is not ready yet");
+      }
+    });
   }
 
 
