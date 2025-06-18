@@ -53,9 +53,12 @@ class UserModel {
           ? List<String>.from(map['pinnedUserIds'])
           : const [],
       unseenMessageCount: map['unseenMessageCount'] ?? 0,
-      groups: List<String>.from(map['groups']?.keys ?? []),
+      groups: map['groups'] != null
+          ? List<String>.from(map['groups'])
+          : const [],
     );
   }
+
 
   String toJson() => jsonEncode(toMap());
 

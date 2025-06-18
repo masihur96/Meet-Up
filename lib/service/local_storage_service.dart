@@ -13,6 +13,7 @@ class LocalUserStorage {
   static Future<UserModel?> getUser() async {
     final prefs = await SharedPreferences.getInstance();
     final userJson = prefs.getString(_userKey);
+    print("vgdfgdgvffdg:$userJson");
     if (userJson == null) return null;
     return UserModel.fromJson(userJson);
   }

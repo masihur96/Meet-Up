@@ -21,7 +21,6 @@ void main() async{
   await FCMService.init();
   CallService().setupCallkitEventHandler(); // ✅ add this
 
-
   await Supabase.initialize(
     url: 'https://yljdgsjwiidlfztlzfvg.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlsamRnc2p3aWlkbGZ6dGx6ZnZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5MDc3MTgsImV4cCI6MjA2MzQ4MzcxOH0.f1uV2nz4YUDLJkyIcy--kOWLqvSruHxgSXzo1MjszOU',
@@ -36,10 +35,13 @@ class MyApp extends StatelessWidget {
   Future<Widget> getInitialScreen() async {
     final userModel = await LocalUserStorage.getUser();
 
+
+    print("userModel:::: $userModel");
+
     if (userModel == null || userModel.name.isEmpty) {
       return const RegisterScreen();
     } else {
-      return const MessagingHomePage();
+      // return const MessagingHomePage();
       return const HomeScreen();
     }
   }
@@ -51,9 +53,6 @@ class MyApp extends StatelessWidget {
       title: 'Meeting App',
       theme: ThemeData(primarySwatch: Colors.blue),
       home:
-      // MessagingHomePage()
-
-
       FutureBuilder<Widget>(
         future: getInitialScreen(),
         builder: (context, snapshot) {
@@ -62,6 +61,7 @@ class MyApp extends StatelessWidget {
               body: Center(child: CircularProgressIndicator()),
             );
           } else if (snapshot.hasError) {
+            print("vfgfgf${snapshot.error}");
             return const Scaffold(
               body: Center(child: Text('Something went wrong')),
             );
