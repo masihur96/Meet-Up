@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:meet_check/screens/messaging_home_page.dart';
 import 'package:meet_check/service/call_service.dart';
 import 'package:meet_check/service/fcm_service.dart';
 import 'package:meet_check/service/local_storage_service.dart';
@@ -36,7 +35,6 @@ class MyApp extends StatelessWidget {
     final userModel = await LocalUserStorage.getUser();
 
 
-    print("userModel:::: $userModel");
 
     if (userModel == null || userModel.name.isEmpty) {
       return const RegisterScreen();
