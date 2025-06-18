@@ -87,6 +87,8 @@ flutter:
   assets:
     - assets/sounds/
     - assets/images/
+    - assets/ignore_directory/service_account.json
+
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
