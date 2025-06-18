@@ -78,18 +78,18 @@ class CallService {
 
       print("📞 CallKit Event: $eventType");
       print("📞 CallKit Event: $data");
-      print("📞 CallKit Event: ${data['extra']['meetingId']}");
-      final meetingId = data?['extra']['meetingId'];
+      print("📞 CallKit Event: ${data?['extra']?['meetingId']}");
+      final meetingId = data?['extra']?['meetingId'];
       final nameCaller = data?['nameCaller'];
+      
       switch (eventType) {
         case Event.actionCallAccept:
-          _onCallAccepted(meetingId,nameCaller);
+          _onCallAccepted(meetingId, nameCaller);
           break;
 
         case Event.actionCallDecline:
-
-           updateUserStatus(
-            userId: meetingId??"",
+          updateUserStatus(
+            userId: meetingId ?? "",
             newStatus: 'declined',
           );
           print("❌ Call declined");
@@ -97,10 +97,9 @@ class CallService {
 
         case Event.actionCallEnded:
           updateUserStatus(
-            userId: meetingId??"",
+            userId: meetingId ?? "",
             newStatus: 'callended',
           );
-
           print("📴 Call ended");
           break;
 
@@ -111,18 +110,14 @@ class CallService {
   }
 
 
-  void _onCallAccepted(String? meetingId,String? callerName) {
+  void _onCallAccepted(String? meetingId, String? callerName) {
     if (meetingId == null) {
       print("⚠️ No meetingId provided");
       return;
     }
 
-    CallService _callService = CallService();
-
-    // Navigate to your call/meeting screen (using context, routing, etc.)
-    // You may use a service or global navigator key
     print("✅ Accepted call with meetingId: $meetingId");
-    _callService. updateUserStatus(
+    updateUserStatus(
       userId: meetingId,
       newStatus: 'accepted',
     );
@@ -137,10 +132,24 @@ class CallService {
               meetingId: meetingId,
             ),
           ),
-              (route) => false,
+          (route) => false,
         );
       } else {
         print("❌ navigatorKey.currentState is not ready yet");
+        // Try again after a longer delay
+        Future.delayed(const Duration(seconds: 1), () {
+          if (navigatorKey.currentState?.mounted == true) {
+            navigatorKey.currentState?.pushAndRemoveUntil(
+              MaterialPageRoute(
+                builder: (_) => CallingScreen(
+                  callerName: callerName ?? "Unknown Caller",
+                  meetingId: meetingId,
+                ),
+              ),
+              (route) => false,
+            );
+          }
+        });
       }
     });
   }

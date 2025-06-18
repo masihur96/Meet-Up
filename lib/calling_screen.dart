@@ -25,17 +25,15 @@ class _CallingScreenState extends State<CallingScreen> {
   final jitsiMeet = JitsiMeet();
   final CallService _callService = CallService();
   Timer? _autoEndTimer;
-  String _callStatus = "Ringing..."; // Initial call status
+  String _callStatus = "Connecting..."; // Initial call status
   bool _isConnected = false;
+  bool _isDisposed = false;
 
   @override
   void initState() {
     super.initState();
-    // _startAutoEndTimer();
     _joinMeeting();
   }
-
-
 
   Future<void> _joinMeeting() async {
     try {
@@ -60,68 +58,110 @@ class _CallingScreenState extends State<CallingScreen> {
               ? "https://i.pravatar.cc/100"
               : widget.avatarUrl,
         ),
-        // Event callbacks
-
       );
+
+
+        JitsiMeetEventListener(
+          conferenceJoined: (url) {
+            if (!_isDisposed) {
+              setState(() {
+                _isConnected = true;
+                _callStatus = "Connected";
+              });
+            }
+          },
+          conferenceTerminated: (url, error) {
+            if (!_isDisposed) {
+              setState(() {
+                _isConnected = false;
+                _callStatus = "Call ended";
+              });
+              _endCall();
+            }
+          },
+          conferenceWillJoin: (url) {
+            if (!_isDisposed) {
+              setState(() {
+                _callStatus = "Joining...";
+              });
+            }
+          },
+        );
+
+
       await jitsiMeet.join(options);
     } catch (e) {
-      setState(() {
-        _callStatus = "Failed to join meeting";
-      });
-      print("Error joining meeting: $e");
-      Future.delayed(const Duration(seconds: 2), () {
-        Navigator.pop(context);
-      });
+      if (!_isDisposed) {
+        setState(() {
+          _callStatus = "Failed to join meeting";
+        });
+        print("Error joining meeting: $e");
+        Future.delayed(const Duration(seconds: 2), () {
+          if (!_isDisposed) {
+            Navigator.pop(context);
+          }
+        });
+      }
+    }
+  }
+
+  void _endCall() {
+    _callService.endCall();
+    if (!_isDisposed) {
+      Navigator.pop(context);
     }
   }
 
   @override
   void dispose() {
+    _isDisposed = true;
     _autoEndTimer?.cancel();
-    _callService.endCall(); // Ensure call is ended
+    jitsiMeet.closeChat();
+    _callService.endCall();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(
-                widget.avatarUrl.isEmpty
-                    ? "https://i.pravatar.cc/100"
-                    : widget.avatarUrl,
+    return WillPopScope(
+      onWillPop: () async {
+        _endCall();
+        return false;
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 50,
+                backgroundImage: NetworkImage(
+                  widget.avatarUrl.isEmpty
+                      ? "https://i.pravatar.cc/100"
+                      : widget.avatarUrl,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              widget.callerName,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
+              const SizedBox(height: 20),
+              Text(
+                widget.callerName,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              _callStatus,
-              style: const TextStyle(
-                color: Colors.white70,
-                fontSize: 16,
+              const SizedBox(height: 10),
+              Text(
+                _callStatus,
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontSize: 16,
+                ),
               ),
-            ),
-            const SizedBox(height: 20),
-            if (!_isConnected)
+              const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  _callService.endCall();
-                  Navigator.pop(context);
-                },
+                onPressed: _endCall,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.red,
                   shape: const CircleBorder(),
@@ -129,7 +169,8 @@ class _CallingScreenState extends State<CallingScreen> {
                 ),
                 child: const Icon(Icons.call_end, color: Colors.white),
               ),
-          ],
+            ],
+          ),
         ),
       ),
     );
