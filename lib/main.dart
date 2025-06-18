@@ -18,12 +18,15 @@ void main() async{
     options: DefaultFirebaseOptions.currentPlatform,
   );
   await FCMService.init();
-  CallService().setupCallkitEventHandler(); // ✅ add this
-
+  
+  // Move call service setup after Supabase initialization
   await Supabase.initialize(
     url: 'https://yljdgsjwiidlfztlzfvg.supabase.co',
     anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlsamRnc2p3aWlkbGZ6dGx6ZnZnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc5MDc3MTgsImV4cCI6MjA2MzQ4MzcxOH0.f1uV2nz4YUDLJkyIcy--kOWLqvSruHxgSXzo1MjszOU',
   );
+  
+  // Setup call service after all initializations
+   CallService().setupCallkitEventHandler();
 
   runApp(const MyApp());
 }
